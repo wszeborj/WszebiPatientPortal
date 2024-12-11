@@ -1,0 +1,112 @@
+<!doctype html>
+
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}WszebiShop{% endblock %}</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+{% block extra_head %} {% endblock %}
+</head>
+
+<body>
+  <!-- navibar start -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark" aria-label="Fifth navbar example">
+    <div class="container-fluid">
+      <a class="navbar-brand" href={% url 'shop:all-product-list' %}>WszebiShop</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarsExample05">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href={% url 'users:profile-update' %}>Update Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "orders:orders-list" %}">My Orders</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "orders:sales-list" %}">My Sales</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "shop:product-create" %}">Create Product</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url "shop:user-product-list" %}">Your Products</a>
+          </li>
+        {% endif %}
+
+
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Categories
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                {% for category in categories %}
+                    {% if category == 'All products' %}
+                    <li>
+                    <a class="dropdown-item" href="{% url 'shop:all-product-list' %}">{{ category }}</a>
+                </li>
+                    {% else %}
+                <li>
+                    <a class="dropdown-item" href="{% url 'shop:category-filtered-products' %}?category={{ category.id }}">{{ category.name }}</a>
+                </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+          </li>
+        </ul>
+
+        <form role="search" class="mx-auto" method="get" action="{%  url 'shop:search-results' %}">
+          <input class="form-control" type="search" placeholder="Search by Name and Description" aria-label="Search" name="SearchByName">
+
+        </form>
+
+        <ul class="navbar-nav ml-auto">
+
+            <a type="button" role="button" href="{% url 'carts:cart-details' %}" class="btn btn-primary" >
+                {{ cart_total_quantity }}
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-basket2" viewBox="0 0 16 16">
+              <path d="M4 10a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0zm3 0a1 1 0 0 1 2 0v2a1 1 0 0 1-2 0zm3 0a1 1 0 1 1 2 0v2a1 1 0 0 1-2 0z"></path>
+              <path d="M5.757 1.071a.5.5 0 0 1 .172.686L3.383 6h9.234L10.07 1.757a.5.5 0 1 1 .858-.514L13.783 6H15.5a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-.623l-1.844 6.456a.75.75 0 0 1-.722.544H3.69a.75.75 0 0 1-.722-.544L1.123 8H.5a.5.5 0 0 1-.5-.5v-1A.5.5 0 0 1 .5 6h1.717L5.07 1.243a.5.5 0 0 1 .686-.172zM2.163 8l1.714 6h8.246l1.714-6z"></path>
+            </svg>Cart
+                          </a>
+
+
+                {% if user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:logout' %}">Logout</a>
+                </li>
+                {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:login' %}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'users:register' %}">Register</a>
+                </li>
+                {% endif %}
+            </ul>
+
+      </div>
+    </div>
+  </nav>
+  <!-- navibar end -->
+
+  <!-- message start -->
+  {% if messages %}
+      {%  for message in messages %}
+          <div class="alert alert-{{  message.tags }}">
+            {{ message }}
+          </div>
+      {% endfor %}
+  {% endif %}
+  <!-- message end -->
+
+  <div id="content">{% block content %} {% endblock %}</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js" integrity="sha384-BBtl+eGJRgqQAUMxJ7pMwbEyER4l1g+O15P+16Ep7Q9Q+zqX6gSbd85u4mG4QzX+" crossorigin="anonymous"></script>
+</body>
+</html>

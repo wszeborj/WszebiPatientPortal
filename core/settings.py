@@ -31,9 +31,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "bootstrap_datepicker_plus",
 ]
 
-INSTALLED_EXTENSIONS = []
+INSTALLED_EXTENSIONS = [
+    "appointments",
+    "users"
+]
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS
 
@@ -128,9 +132,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media/")
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# uncomment when developing is finished
+# sentry_sdk.init(
+#     dsn=env("SENTRY_DSN"),
+#     traces_sample_rate=1.0,
+#     profiles_sample_rate=1.0,
+# )
 
-sentry_sdk.init(
-    dsn=env("SENTRY_DSN"),
-    traces_sample_rate=1.0,
-    profiles_sample_rate=1.0,
-)
+AUTH_USER_MODEL = "users.User"
