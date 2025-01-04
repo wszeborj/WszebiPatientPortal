@@ -5,176 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="e260c3d6-47c7-4435-95eb-0251b63aa109" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/appointments/migrations/0002_alter_appointment_doctor_alter_appointment_notes_and_more.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/appointments/templates/appointments/main.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/appointments/templates/appointments/user_appointments.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/css/main.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/about.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/apple-touch-icon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/departments-1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/departments-2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/departments-3.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/departments-4.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/departments-5.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/doctors/doctors-1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/doctors/doctors-2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/doctors/doctors-3.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/doctors/doctors-4.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/favicon.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/features.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/gallery/gallery-1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/gallery/gallery-2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/gallery/gallery-3.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/gallery/gallery-4.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/gallery/gallery-5.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/gallery/gallery-6.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/gallery/gallery-7.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/gallery/gallery-8.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/hero-carousel/hero-carousel-1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/hero-carousel/hero-carousel-2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/hero-carousel/hero-carousel-3.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/logo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/services.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/testimonials/testimonials-1.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/testimonials/testimonials-2.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/testimonials/testimonials-3.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/testimonials/testimonials-4.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/img/testimonials/testimonials-5.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/js/main.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/scss/Readme.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/aos/aos.cjs.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/aos/aos.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/aos/aos.esm.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/aos/aos.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/aos/aos.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap-icons/bootstrap-icons.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap-icons/bootstrap-icons.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap-icons/bootstrap-icons.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap-icons/bootstrap-icons.scss" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap-icons/fonts/bootstrap-icons.woff" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap-icons/fonts/bootstrap-icons.woff2" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-grid.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-grid.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-grid.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-grid.min.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-grid.rtl.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-grid.rtl.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-grid.rtl.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-grid.rtl.min.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-reboot.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-reboot.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-reboot.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-reboot.min.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-reboot.rtl.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-reboot.rtl.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-reboot.rtl.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-reboot.rtl.min.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-utilities.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-utilities.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-utilities.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-utilities.min.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-utilities.rtl.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-utilities.rtl.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-utilities.rtl.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap-utilities.rtl.min.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap.min.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap.rtl.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap.rtl.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap.rtl.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/bootstrap.rtl.min.css.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/css/prb.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/js/bootstrap.bundle.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/js/bootstrap.bundle.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/js/bootstrap.esm.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/js/bootstrap.esm.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/js/bootstrap.esm.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/js/bootstrap.esm.min.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/js/bootstrap.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/js/bootstrap.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/js/bootstrap.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/bootstrap/js/bootstrap.min.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/all.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/all.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/brands.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/brands.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/fontawesome.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/fontawesome.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/regular.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/regular.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/solid.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/solid.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/svg-with-js.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/svg-with-js.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/v4-font-face.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/v4-font-face.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/v4-shims.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/v4-shims.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/v5-font-face.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/css/v5-font-face.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/webfonts/fa-brands-400.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/webfonts/fa-brands-400.woff2" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/webfonts/fa-regular-400.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/webfonts/fa-regular-400.woff2" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/webfonts/fa-solid-900.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/webfonts/fa-solid-900.woff2" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/webfonts/fa-v4compatibility.ttf" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/fontawesome-free/webfonts/fa-v4compatibility.woff2" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/glightbox/css/glightbox.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/glightbox/css/glightbox.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/glightbox/js/glightbox.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/glightbox/js/glightbox.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/php-email-form/validate.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/purecounter/purecounter_vanilla.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/purecounter/purecounter_vanilla.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/swiper/swiper-bundle.min.css" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/swiper/swiper-bundle.min.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/assets/vendor/swiper/swiper-bundle.min.js.map" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/forms/Readme.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/forms/appointment.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/static/forms/contact.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/forms.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/middleware.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/migrations/0002_alter_user_phone_number.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/templates/users/choose_user_role.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/templates/users/login.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/templates/users/logout.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/templates/users/password_reset.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/templates/users/password_reset_complete.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/templates/users/password_reset_confirm.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/templates/users/password_reset_done.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/templates/users/password_reset_email.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/templates/users/profile.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/templates/users/register.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/users/templates/users/user_activation_email.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.pre-commit-config.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/.pre-commit-config.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appointments/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/appointments/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appointments/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/appointments/apps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appointments/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/appointments/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appointments/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/appointments/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appointments/templates/appointments/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/appointments/templates/appointments/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appointments/templates/appointments/home.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/appointments/tests.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/appointments/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/appointments/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/appointments/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/appointments/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/core/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/core/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/core/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/poetry.lock" beforeDir="false" afterPath="$PROJECT_DIR$/poetry.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/apps.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/apps.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/models2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/tests.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/users/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/users/middleware.py" beforeDir="false" afterPath="$PROJECT_DIR$/users/middleware.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -284,7 +117,7 @@
       <workItem from="1733139683236" duration="40919000" />
       <workItem from="1733784108603" duration="22086000" />
       <workItem from="1734041368030" duration="9297000" />
-      <workItem from="1734383923699" duration="58366000" />
+      <workItem from="1734383923699" duration="64210000" />
     </task>
     <servers />
   </component>
@@ -294,6 +127,6 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/WszebiPatientPortal$settings.coverage" NAME="settings Coverage Results" MODIFIED="1733870260773" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/core" />
     <SUITE FILE_PATH="coverage/WszebiPatientPortal$manage.coverage" NAME="manage Coverage Results" MODIFIED="1733959722522" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:\Users\user\OneDrive\Dokumenty\Projekty_Zadania_Dev_Mentoring\WszebiPatientPortal" />
-    <SUITE FILE_PATH="coverage/WszebiPatientPortal$WszebiPatientPortal.coverage" NAME="WszebiPatientPortal Coverage Results" MODIFIED="1735946162408" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:\Users\user\OneDrive\Dokumenty\Projekty_Zadania_Dev_Mentoring\WszebiPatientPortal" />
+    <SUITE FILE_PATH="coverage/WszebiPatientPortal$WszebiPatientPortal.coverage" NAME="WszebiPatientPortal Coverage Results" MODIFIED="1736025938083" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="C:\Users\user\OneDrive\Dokumenty\Projekty_Zadania_Dev_Mentoring\WszebiPatientPortal" />
   </component>
 </project>
