@@ -4,4 +4,11 @@ from . import views
 
 app_name = "appointments"
 
-urlpatterns = []
+urlpatterns = [
+    path("", views.MainView.as_view(), name="main"),
+    path(
+        "user_appointments",
+        views.UserAppointmentsView.as_view(),
+        name="user_appointments",
+    ),
+]

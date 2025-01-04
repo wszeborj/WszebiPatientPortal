@@ -2,7 +2,6 @@ import os
 from pathlib import Path
 
 import environ
-import sentry_sdk
 
 from .env import env
 
@@ -32,12 +31,11 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "bootstrap_datepicker_plus",
+    "crispy_forms",
+    "crispy_bootstrap4",
 ]
 
-INSTALLED_EXTENSIONS = [
-    "appointments",
-    "users"
-]
+INSTALLED_EXTENSIONS = ["appointments", "users"]
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS
 
@@ -140,3 +138,20 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # )
 
 AUTH_USER_MODEL = "users.User"
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
+
+CRISPY_TEMPLATE_PACK = "bootstrap4"
+
+LOGIN_REDIRECT_URL = "appointments:user_appointments"
+LOGIN_URL = "users:login"
+
+# if env('DEBUG'):
+# EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+# else:
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_FILE_PATH = os.path.join(BASE_DIR, "sent_emails")

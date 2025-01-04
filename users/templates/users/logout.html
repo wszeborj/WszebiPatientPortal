@@ -1,0 +1,12 @@
+{% extends 'appointments/base.html' %}
+{% load crispy_forms_tags %}
+{% block content %}
+<div class="content-section">
+    <h2>You have been log out</h2>
+    <div class="border-top pt-3">
+        <small class="text-muted">
+            <a href="{% url 'users:login' %}">Log In Again</a>
+        </small>
+    </div>
+</div>
+{% endblock %}
