@@ -6,7 +6,11 @@ class Appointment(models.Model):
         "users.Doctor", on_delete=models.CASCADE, related_name="appointments"
     )
     patient = models.ForeignKey(
-        "users.Patient", on_delete=models.CASCADE, related_name="appointments"
+        "users.Patient",
+        on_delete=models.CASCADE,
+        related_name="appointments",
+        null=True,
+        blank=True,
     )
     date = models.DateField()
     time = models.TimeField()

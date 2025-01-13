@@ -11,4 +11,14 @@ urlpatterns = [
         views.UserAppointmentsView.as_view(),
         name="user_appointments",
     ),
+    path(
+        "schedule_calendar/",
+        views.ScheduleCalendarView.as_view(),
+        name="schedule-calendar",
+    ),
+    path(
+        "create_scheduleday/",
+        views.ScheduleDayCreateView.as_view(),
+        name="create-schedule-day",
+    ),
 ]

@@ -1,0 +1,26 @@
+{% extends 'appointments/base.html' %}
+{% load static %}
+{% block title %}Calendar{% endblock %}
+
+{% block content %}
+<h1>Kalendarz pracy lekarza</h1>
+<table>
+    <thead>
+        <tr>
+            <th>Data</th>
+            <th>Godziny pracy</th>
+            <th>Interwał wizyt</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for day in schedule_days %}
+        <tr>
+            <td>{{ day.work_date }}</td>
+            <td>{{ day.start_time }} - {{ day.end_time }}</td>
+            <td>{{ day.interval }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'appointments:create-schedule-day' %}">Dodaj dzień pracy</a>
+{% endblock %}

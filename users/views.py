@@ -24,7 +24,7 @@ class RegisterUserFormView(FormView):
         user.is_active = False
         user.save()
 
-        UserProcessing.send_activation_mail(request=self.request, user=user)
+        UserProcessing.send_user_activation_mail(request=self.request, user=user)
 
         messages.success(
             self.request,
@@ -84,9 +84,31 @@ class ActivateView(View):
 
 class UserProcessing:
     @staticmethod
-    def send_activation_mail(request, user):
+    def send_user_activation_mail(request, user):
         current_site = get_current_site(request)
         subject = "Activation link to your account on WszebiPatientPortal"
+        message = render_to_string(
+            template_name="users/user_activation_email.html",
+            context={
+                "user": user,
+                "domain": current_site,
+                "uid": urlsafe_base64_encode(force_bytes(user.pk)),
+                "token": default_token_generator.make_token(user),
+            },
+        )
+        recipient_mail = user.email
+        send_mail(
+            subject=subject,
+            message=message,
+            from_email="no_reply@wszebipatientportal.pl",
+            recipient_list=[recipient_mail],
+            fail_silently=False,
+        )
+
+    @staticmethod
+    def confirmation_doctor_profile(request, user):
+        current_site = get_current_site(request)
+        subject = "Confirmation link to your doctor profile"
         message = render_to_string(
             template_name="users/user_activation_email.html",
             context={

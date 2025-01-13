@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "bootstrap_datepicker_plus",
     "crispy_forms",
     "crispy_bootstrap4",
+    "bootstrap4",
 ]
 
 INSTALLED_EXTENSIONS = ["appointments", "users"]
@@ -47,7 +48,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "users.middleware.CompleteDoctorProfileMiddleware"
+    "users.middleware.CompleteDoctorProfileMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"

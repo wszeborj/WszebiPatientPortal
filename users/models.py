@@ -69,6 +69,9 @@ class Doctor(models.Model):
         auto_now_add=True, help_text="Time when the patient was created."
     )
     modified_at = models.DateTimeField(auto_now=True)
+    confirmed = models.BooleanField(
+        default=False, help_text="Whether the doctor is confirmed."
+    )
 
     def __str__(self):
         return f"{self.title} {self.first_name} {self.last_name}"
