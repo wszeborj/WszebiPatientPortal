@@ -1,0 +1,31 @@
+{% extends 'appointments/base.html' %}
+{% load static %}
+
+{% block title %}Confirm Deletion{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-danger">Confirm Deletion</h1>
+    <p>Are you sure you want to delete the work schedule for:</p>
+    <ul>
+        <li><strong>Date:</strong> {{ scheduleday.work_date }}</li>
+        <li><strong>Working Hours:</strong> {{ scheduleday.start_time }} - {{ scheduleday.end_time }}</li>
+        <li><strong>Appointment Interval:</strong> {{ scheduleday.interval }}</li>
+    </ul>
+    <p>This action <strong>cannot be undone</strong>.</p>
+
+    <div class="d-flex justify-content-between">
+
+        <a href="{% url 'appointments:schedule-calendar' %}" class="btn btn-secondary">
+            Cancel
+        </a>
+
+        <form method="POST" action="{% url 'appointments:schedule-day-delete' scheduleday.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">
+                Confirm Delete
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}

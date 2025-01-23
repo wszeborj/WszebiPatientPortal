@@ -2,15 +2,18 @@ from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.timezone import now
-from django.views.generic import CreateView, ListView, TemplateView
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
 
-from appointments.models import Appointment
-
-from .forms import ScheduleDayForm
-from .models import ScheduleDay
+from .forms import AppointmentForm, ScheduleDayForm
+from .models import Appointment, ScheduleDay
 
 
-# Create your views here.
 class MainView(TemplateView):
     template_name = "appointments/main.html"
 
@@ -48,6 +51,7 @@ class ScheduleCalendarView(TemplateView):
 
 
 class ScheduleDayCreateView(CreateView):
+    model = ScheduleDay
     template_name = "appointments/schedule_form.html"
     form_class = ScheduleDayForm
     success_url = reverse_lazy("appointments:schedule-calendar")
@@ -70,12 +74,71 @@ class ScheduleDayCreateView(CreateView):
             messages.success(
                 self.request, "Grafik został zapisany! Możesz dodać kolejny dzień."
             )
-            return redirect("appointments:create-schedule-day")
+            return redirect("appointments:schedule-day-create")
+
+    def form_invalid(self, form):
+        # print(self.request.POST)
+        # print(form.errors)
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(self.request, f"Błąd w polu {field}: {error}")
+        return super().form_invalid(form)
+
+
+class ScheduleDayUpdateView(UpdateView):
+    template_name = "appointments/schedule_form.html"
+    form_class = ScheduleDayForm
+    model = ScheduleDay
+    success_url = reverse_lazy("appointments:schedule-calendar")
+
+
+class ScheduleDayDeleteView(DeleteView):
+    template_name = "appointments/schedule_confirm_delete.html"
+    model = ScheduleDay
+    success_url = reverse_lazy("appointments:schedule-calendar")
+
+
+class AppointmentListView(ListView):
+    model = Appointment
+    template_name = "appointments/appointment_list.html"
+    context_object_name = "appointments"
+
+
+class AppointmentCreateView(CreateView):
+    model = Appointment
+    form_class = AppointmentForm
+    template_name = "appointments/appointment_form.html"
+    success_url = reverse_lazy("appointments:appointments-list")
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs["user"] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        user = self.request.user
+        appointment = form.save(commit=False)
+        appointment.user = user
+        appointment.save()
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         print(self.request.POST)
         print(form.errors)
         for field, errors in form.errors.items():
             for error in errors:
-                messages.error(self.request, f"Błąd w polu {field}: {error}")
+                messages.error(self.request, f"Issue in field {field}: {error}")
         return super().form_invalid(form)
+
+
+class AppointmentUpdateView(UpdateView):
+    model = Appointment
+    form_class = AppointmentForm
+    template_name = "appointments/appointment_form.html"
+    success_url = reverse_lazy("appointments:appointments-list")
+
+
+class AppointmentDeleteView(DeleteView):
+    model = Appointment
+    template_name = "appointments/appointment_confirm_delete.html"
+    success_url = reverse_lazy("appointments:appointments-list")

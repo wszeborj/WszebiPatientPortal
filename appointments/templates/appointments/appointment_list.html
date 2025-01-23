@@ -1,0 +1,38 @@
+{% extends "appointments/base.html" %}
+{% block title %}Appointments{% endblock %}
+
+{% block content %}
+<h1>Appointments</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Doctor</th>
+            <th>Patient</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for appointment in appointments %}
+        <tr>
+            <td>{{ appointment.doctor }}</td>
+            <td>{{ appointment.patient }}</td>
+            <td>{{ appointment.date }}</td>
+            <td>{{ appointment.time }}</td>
+            <td>
+                <a href="{% url 'appointments:appointment-update' appointment.pk %}" class="btn btn-primary btn-sm">
+                    Edit
+                </a>
+                <a href="{% url 'appointments:appointment-delete' appointment.pk %}" class="btn btn-danger btn-sm">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<a href="{% url 'appointments:appointment-create' %}" class="btn btn-success">
+    Add Appointment
+</a>
+{% endblock %}

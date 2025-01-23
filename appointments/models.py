@@ -5,12 +5,10 @@ class Appointment(models.Model):
     doctor = models.ForeignKey(
         "users.Doctor", on_delete=models.CASCADE, related_name="appointments"
     )
-    patient = models.ForeignKey(
-        "users.Patient",
+    user = models.ForeignKey(
+        "users.User",
         on_delete=models.CASCADE,
         related_name="appointments",
-        null=True,
-        blank=True,
     )
     date = models.DateField()
     time = models.TimeField()
@@ -45,4 +43,7 @@ class ScheduleDay(models.Model):
         ordering = ["doctor", "work_date", "start_time"]
 
     def __str__(self):
-        return f"{self.doctor} - {self.work_date} {self.start_time}-{self.end_time}"
+        return (
+            f"{self.title} {self.user.first_name} {self.user.last_name} - "
+            f"{self.work_date} {self.start_time}-{self.end_time}"
+        )

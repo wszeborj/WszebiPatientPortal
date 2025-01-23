@@ -1,0 +1,26 @@
+{% extends "appointments/base.html" %}
+{% load static %}
+
+{% block title %}Confirm Delete Appointment{% endblock %}
+
+{% block content %}
+<h1>Confirm Delete Appointment</h1>
+<p>Are you sure you want to delete this appointment?</p>
+
+<ul>
+    <li><strong>Doctor:</strong> {{ object.doctor }}</li>
+    <li><strong>Patient:</strong> {{ object.patient }}</li>
+    <li><strong>Date:</strong> {{ object.date }}</li>
+    <li><strong>Time:</strong> {{ object.time }}</li>
+</ul>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">
+        Yes, delete it
+    </button>
+    <a href="{% url 'appointments:appointments-list' %}" class="btn btn-secondary">
+        Cancel
+    </a>
+</form>
+{% endblock %}

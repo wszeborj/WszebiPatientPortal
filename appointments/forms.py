@@ -3,7 +3,7 @@ from datetime import date, datetime, time, timedelta
 from bootstrap_datepicker_plus.widgets import DatePickerInput
 from django import forms
 
-from .models import ScheduleDay
+from .models import Appointment, ScheduleDay
 
 
 def validate_interval(interval):
@@ -130,3 +130,35 @@ class ScheduleDayForm(forms.ModelForm):
             raise forms.ValidationError(
                 "The specified schedule overlaps with an existing one. Please adjust the hours."
             )
+
+
+class AppointmentForm(forms.ModelForm):
+    date = forms.DateField(
+        widget=DatePickerInput(options={"format": "YYYY/MM/DD"}),
+        help_text="Select the appointment date",
+    )
+    time = forms.TimeField(
+        widget=forms.TimeInput(attrs={"type": "time", "step": "300"}),
+        help_text="Select the appointment time",
+    )
+    notes = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 3}),
+        required=False,
+        help_text="Additional notes for the appointment (optional)",
+    )
+
+    class Meta:
+        model = Appointment
+        fields = ["doctor", "date", "time", "notes"]
+
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop("user", None)
+        super().__init__(*args, **kwargs)
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if self.user:
+            instance.user = self.user
+        if commit:
+            instance.save()
+        return instance
