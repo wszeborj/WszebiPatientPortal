@@ -30,13 +30,14 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django_extensions",
     "bootstrap_datepicker_plus",
     "crispy_forms",
     "crispy_bootstrap4",
     "bootstrap4",
 ]
 
-INSTALLED_EXTENSIONS = ["appointments", "users"]
+INSTALLED_EXTENSIONS = ["appointments", "schedules", "users"]
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS
 

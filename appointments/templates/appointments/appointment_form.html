@@ -1,22 +1,24 @@
 {% extends "appointments/base.html" %}
-{% load static %}
-
-{% block title %}Appointment Form{% endblock %}
+{% block title %}Confirm Appointment{% endblock %}
 
 {% block content %}
-<h1>{{ object.pk|yesno:"Edit Appointment,Create New Appointment" }}</h1>
-    {% load bootstrap4 %}
-    {% bootstrap_css %}
-    {% bootstrap_javascript jquery='full' %}
-    {{ form.media }}
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">
-        Save Appointment
-    </button>
-    <a href="{% url 'appointments:appointments-list' %}" class="btn btn-secondary">
-        Cancel
-    </a>
-</form>
+<div class="container mt-4">
+    <h1 class="text-center">Confirm Your Appointment</h1>
+
+    <div class="card">
+        <div class="card-body">
+            <h4>Appointment Details</h4>
+            <p><strong>Doctor:</strong> {{ form.instance.doctor }}</p>
+            <p><strong>Date:</strong> {{ form.instance.date }}</p>
+            <p><strong>Time:</strong> {{ form.instance.time|time:'H:i' }}</p>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-success mt-3">Confirm Appointment</button>
+    </form>
+
+    <a href="{% url 'appointments:appointments-list' %}" class="btn btn-secondary mt-3">Cancel</a>
+</div>
 {% endblock %}

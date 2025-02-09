@@ -1,38 +1,57 @@
 {% extends "appointments/base.html" %}
-{% block title %}Appointments{% endblock %}
+{% block title %}Weekly Doctor Schedule{% endblock %}
 
 {% block content %}
-<h1>Appointments</h1>
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Doctor</th>
-            <th>Patient</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for appointment in appointments %}
-        <tr>
-            <td>{{ appointment.doctor }}</td>
-            <td>{{ appointment.patient }}</td>
-            <td>{{ appointment.date }}</td>
-            <td>{{ appointment.time }}</td>
-            <td>
-                <a href="{% url 'appointments:appointment-update' appointment.pk %}" class="btn btn-primary btn-sm">
-                    Edit
-                </a>
-                <a href="{% url 'appointments:appointment-delete' appointment.pk %}" class="btn btn-danger btn-sm">
-                    Delete
-                </a>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<a href="{% url 'appointments:appointment-create' %}" class="btn btn-success">
-    Add Appointment
-</a>
+<div class="container mt-4">
+    <h1 class="text-center">Weekly Doctor Schedule</h1>
+
+    <!-- Nawigacja paginacji -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <a href="?week={{ previous_week }}" class="btn btn-primary {% if not previous_week %}disabled{% endif %}">
+            &larr; Previous Week
+        </a>
+        <h4>Week of {{ start_of_week|date:"Y-m-d" }} - {{ end_of_week|date:"Y-m-d" }}</h4>
+        <a href="?week={{ next_week }}" class="btn btn-primary {% if not next_week %}disabled{% endif %}">
+            Next Week &rarr;
+        </a>
+    </div>
+
+    <!-- Harmonogram dla każdego lekarza -->
+    {% for doctor, schedule in doctor_week_schedule.items %}
+    <div class="mb-5">
+        <h2 class="text-center">{{ doctor.user.first_name }} {{ doctor.user.last_name }}</h2>
+
+        <div class="row row-cols-7">
+            {% for day, slots in schedule.0.items %}
+            <div class="col text-center border p-2 d-flex flex-column">
+                <!-- Nagłówek dnia -->
+                <h5 class="bg-info text-white py-2">{{ day|date:"l" }} <br> {{ day|date:"Y-m-d" }}</h5>
+
+                <!-- Treść dnia -->
+                <div class="flex-grow-1">
+                    {% if slots|length == 0 or slots.0.time is None %}
+                    <p class="text-muted">Doctor is not available today</p>
+                    {% else %}
+                    <ul class="list-unstyled">
+                        {% for slot in slots %}
+                        <li class="py-2 {% if slot.is_taken or slot.is_past %}bg-light text-muted{% else %}bg-success text-white{% endif %} border mb-1">
+                            {{ slot.time }}
+                            {% if not slot.is_taken and not slot.is_past %}
+                            <a href="{% url 'appointments:appointment-create' %}?doctor={{ doctor.id }}&date={{ day }}&time={{ slot.time }}" class="btn btn-sm btn-light">Book</a>
+                            {% elif slot.is_taken %}
+                            <span class="badge bg-danger">Booked</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Unavailable</span>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

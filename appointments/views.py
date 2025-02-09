@@ -1,7 +1,9 @@
+from datetime import datetime, timedelta
+
 from django.contrib import messages
-from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
-from django.utils.timezone import now
+from django.utils import timezone
 from django.views.generic import (
     CreateView,
     DeleteView,
@@ -9,9 +11,13 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
+from icecream import ic
 
-from .forms import AppointmentForm, ScheduleDayForm
-from .models import Appointment, ScheduleDay
+from schedules.models import ScheduleDay
+from users.models import Doctor
+
+from .forms import AppointmentForm
+from .models import Appointment
 
 
 class MainView(TemplateView):
@@ -25,7 +31,7 @@ class UserAppointmentsView(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        now_datetime = now()
+        now_datetime = timezone.now()
 
         upcoming_appointment = self.model.objects.filter(
             date__gte=now_datetime.date(), time__gte=now_datetime.time()
@@ -39,69 +45,77 @@ class UserAppointmentsView(ListView):
         return context
 
 
-class ScheduleCalendarView(TemplateView):
-    template_name = "appointments/schedule_calendar.html"
-
-    def get_context_data(self, **kwargs):
-        doctor = self.request.user.doctor_profile
-        schedule_days = ScheduleDay.objects.filter(doctor=doctor)
-        context = super().get_context_data(**kwargs)
-        context["schedule_days"] = schedule_days
-        return context
-
-
-class ScheduleDayCreateView(CreateView):
-    model = ScheduleDay
-    template_name = "appointments/schedule_form.html"
-    form_class = ScheduleDayForm
-    success_url = reverse_lazy("appointments:schedule-calendar")
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        kwargs["doctor"] = self.request.user.doctor_profile
-        return kwargs
-
-    def form_valid(self, form):
-        action = self.request.POST.get("action")
-        doctor = self.request.user.doctor_profile
-        schedule = form.save(commit=False)
-        schedule.doctor = doctor
-        schedule.save()
-        if action == "save_exit":
-            messages.success(self.request, "Grafik został zapisany!.")
-            return super().form_valid(form)
-        elif action == "save":
-            messages.success(
-                self.request, "Grafik został zapisany! Możesz dodać kolejny dzień."
-            )
-            return redirect("appointments:schedule-day-create")
-
-    def form_invalid(self, form):
-        # print(self.request.POST)
-        # print(form.errors)
-        for field, errors in form.errors.items():
-            for error in errors:
-                messages.error(self.request, f"Błąd w polu {field}: {error}")
-        return super().form_invalid(form)
-
-
-class ScheduleDayUpdateView(UpdateView):
-    template_name = "appointments/schedule_form.html"
-    form_class = ScheduleDayForm
-    model = ScheduleDay
-    success_url = reverse_lazy("appointments:schedule-calendar")
-
-
-class ScheduleDayDeleteView(DeleteView):
-    template_name = "appointments/schedule_confirm_delete.html"
-    model = ScheduleDay
-    success_url = reverse_lazy("appointments:schedule-calendar")
-
-
 class AppointmentListView(ListView):
     model = Appointment
     template_name = "appointments/appointment_list.html"
     context_object_name = "appointments"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        week_param = self.request.GET.get("week")
+
+        if week_param:
+            start_of_week = datetime.strptime(week_param, "%Y-%m-%d")
+        else:
+            today = datetime.today()
+            start_of_week = today - timedelta(days=today.weekday())
+
+        previous_week = (start_of_week - timedelta(days=7)).strftime("%Y-%m-%d")
+        next_week = (start_of_week + timedelta(days=7)).strftime("%Y-%m-%d")
+        context["previous_week"] = previous_week
+        context["next_week"] = next_week
+
+        end_of_week = start_of_week + timedelta(days=6)
+        all_doctors = Doctor.objects.all()
+        context["start_of_week"] = start_of_week
+        context["end_of_week"] = end_of_week
+        context["week_days"] = list(range(7))
+
+        doctor_week_schedule = {}
+        for doctor in all_doctors:
+            schedule_days = ScheduleDay.objects.filter(
+                doctor=doctor, work_date__range=[start_of_week, end_of_week]
+            )
+            available_schedule_days = []
+            doctor_schedule_day = {}
+            for schedule_day in schedule_days:
+                available_slots = []
+                current_time = datetime.combine(
+                    schedule_day.work_date, schedule_day.start_time
+                )
+                end_time = datetime.combine(
+                    schedule_day.work_date, schedule_day.end_time
+                )
+                while current_time < end_time:
+                    is_past = current_time < datetime.now()
+                    is_taken = Appointment.objects.filter(
+                        doctor=schedule_day.doctor,
+                        date=schedule_day.work_date,
+                        time=current_time.time(),
+                    ).exists()
+                    slot = {
+                        "time": current_time.strftime("%H:%M"),
+                        "is_taken": is_taken,
+                        "is_past": is_past,
+                    }
+                    available_slots.append(slot)
+                    current_time += schedule_day.interval
+
+                doctor_schedule_day[schedule_day.work_date] = available_slots
+            available_schedule_days.append(doctor_schedule_day)
+
+            for day_num in range(7):
+                date_time = start_of_week + timedelta(days=day_num)
+                date = date_time.date()
+
+                if date not in doctor_schedule_day.keys():
+                    doctor_schedule_day[date] = []
+            available_schedule_days.append(doctor_schedule_day)
+            doctor_week_schedule[doctor] = available_schedule_days
+
+        context["doctor_week_schedule"] = doctor_week_schedule
+        ic(doctor_week_schedule)
+        return context
 
 
 class AppointmentCreateView(CreateView):
@@ -112,19 +126,27 @@ class AppointmentCreateView(CreateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
+        doctor_id = self.request.GET.get("doctor")
+        date_str = self.request.GET.get("date")
+        time_str = self.request.GET.get("time")
+
+        doctor = get_object_or_404(Doctor, id=doctor_id)
+        date = datetime.strptime(date_str, "%b. %d, %Y").date()
+        time = datetime.strptime(time_str, "%H:%M").time()
+
+        kwargs["doctor"] = doctor
+        kwargs["date"] = date
+        kwargs["time"] = time
         kwargs["user"] = self.request.user
         return kwargs
 
     def form_valid(self, form):
-        user = self.request.user
-        appointment = form.save(commit=False)
-        appointment.user = user
-        appointment.save()
+        form.save()
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        print(self.request.POST)
-        print(form.errors)
+        # print(self.request.POST)
+        # print(form.errors)
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(self.request, f"Issue in field {field}: {error}")

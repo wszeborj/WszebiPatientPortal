@@ -20,10 +20,10 @@
             <td>{{ day.start_time }} - {{ day.end_time }}</td>
             <td>{{ day.interval }}</td>
             <td>
-                <a href="{% url 'appointments:schedule-day-update' day.id %}" class="btn btn-primary btn-sm">
+                <a href="{% url 'schedules:schedule-day-update' day.id %}" class="btn btn-primary btn-sm">
                     Edit
                 </a>
-                <a href="{% url 'appointments:schedule-day-delete' day.id %}" class="btn btn-danger btn-sm">
+                <a href="{% url 'schedules:schedule-day-delete' day.id %}" class="btn btn-danger btn-sm">
                     Remove
                 </a>
             </td>
@@ -32,7 +32,7 @@
     </tbody>
 </table>
 <div class="text-end">
-    <a href="{% url 'appointments:schedule-day-create' %}" class="btn btn-success">
+    <a href="{% url 'schedules:schedule-day-create' %}" class="btn btn-success">
         Add Work Day
     </a>
 </div>
