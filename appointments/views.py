@@ -11,7 +11,6 @@ from django.views.generic import (
     TemplateView,
     UpdateView,
 )
-from icecream import ic
 
 from schedules.models import ScheduleDay
 from users.models import Doctor
@@ -62,21 +61,20 @@ class AppointmentListView(ListView):
 
         previous_week = (start_of_week - timedelta(days=7)).strftime("%Y-%m-%d")
         next_week = (start_of_week + timedelta(days=7)).strftime("%Y-%m-%d")
+        end_of_week = start_of_week + timedelta(days=6)
         context["previous_week"] = previous_week
         context["next_week"] = next_week
-
-        end_of_week = start_of_week + timedelta(days=6)
-        all_doctors = Doctor.objects.all()
         context["start_of_week"] = start_of_week
         context["end_of_week"] = end_of_week
         context["week_days"] = list(range(7))
+
+        all_doctors = Doctor.objects.all()
 
         doctor_week_schedule = {}
         for doctor in all_doctors:
             schedule_days = ScheduleDay.objects.filter(
                 doctor=doctor, work_date__range=[start_of_week, end_of_week]
             )
-            available_schedule_days = []
             doctor_schedule_day = {}
             for schedule_day in schedule_days:
                 available_slots = []
@@ -102,19 +100,18 @@ class AppointmentListView(ListView):
                     current_time += schedule_day.interval
 
                 doctor_schedule_day[schedule_day.work_date] = available_slots
-            available_schedule_days.append(doctor_schedule_day)
 
             for day_num in range(7):
                 date_time = start_of_week + timedelta(days=day_num)
                 date = date_time.date()
-
                 if date not in doctor_schedule_day.keys():
                     doctor_schedule_day[date] = []
-            available_schedule_days.append(doctor_schedule_day)
-            doctor_week_schedule[doctor] = available_schedule_days
+
+            doctor_schedule_day = dict(sorted(doctor_schedule_day.items()))
+            doctor_week_schedule[doctor] = doctor_schedule_day
 
         context["doctor_week_schedule"] = doctor_week_schedule
-        ic(doctor_week_schedule)
+
         return context
 
 
