@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DeleteView, TemplateView, UpdateView
@@ -7,8 +8,15 @@ from .forms import ScheduleDayForm
 from .models import ScheduleDay
 
 
-class ScheduleCalendarView(TemplateView):
+class ScheduleCalendarView(PermissionRequiredMixin, TemplateView):
     template_name = "schedules/schedule_calendar.html"
+    permission_required = (
+        "schedules.add_scheduleday",
+        "schedules.change_scheduleday",
+        "schedules.delete_scheduleday",
+        "schedules.view_scheduleday",
+    )
+    # permission_denied_message = "You have no access to this calendar"
 
     def get_context_data(self, **kwargs):
         doctor = self.request.user.doctor_profile

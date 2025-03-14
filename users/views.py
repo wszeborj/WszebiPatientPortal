@@ -1,6 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import LoginView
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.shortcuts import redirect
@@ -37,6 +38,7 @@ class CompleteDoctorDataView(LoginRequiredMixin, FormView):
     template_name = "users/register.html"
     form_class = DoctorRegistrationForm
     success_url = reverse_lazy("users:login")
+    # todo zrobic to na permissionach, z modelem Specialization
 
     def dispatch(self, request, *args, **kwargs):
         if request.user.role != User.Role.DOCTOR:
@@ -47,9 +49,11 @@ class CompleteDoctorDataView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         doctor = form.save(commit=False)
         doctor.user = self.request.user
+
         doctor.save()
         form.save_m2m()
         messages.success(self.request, "Uzupełniłeś dane jako lekarz!")
+
         return super().form_valid(form)
 
 
@@ -80,6 +84,17 @@ class ActivateView(View):
         else:
             messages.warning(request, "Link aktywacyjny jest nieprawidłowy!")
             return redirect("users:register")
+
+
+class CustomLoginView(LoginView):
+    template_name = "users/login.html"
+
+    def get_success_url(self):
+        user = self.request.user
+        if user.role == User.Role.PATIENT:
+            return redirect("appointments:user_appointments")
+        if user.role == User.Role.DOCTOR:
+            return redirect("appointments:doctor_appointments")
 
 
 class UserProcessing:

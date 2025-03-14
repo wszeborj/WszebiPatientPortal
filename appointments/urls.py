@@ -12,6 +12,11 @@ urlpatterns = [
         name="user_appointments",
     ),
     path(
+        "doctor_appointments",
+        views.DoctorAppointmentsView.as_view(),
+        name="doctor_appointments",
+    ),
+    path(
         "appointments/",
         views.AppointmentListView.as_view(),
         name="appointments-list",

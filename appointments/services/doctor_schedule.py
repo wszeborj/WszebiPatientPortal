@@ -60,10 +60,8 @@ class DoctorScheduleService:
         for day_num in range(7):
             date_time = start_of_week + timedelta(days=day_num)
             schedule_day = date_time.date()
-            print(doctor_schedule_day.keys())
             if schedule_day not in doctor_schedule_day.keys():
                 doctor_schedule_day[schedule_day] = []
-                print("in if")
 
         doctor_schedule_day = dict(sorted(doctor_schedule_day.items()))
         return doctor_schedule_day

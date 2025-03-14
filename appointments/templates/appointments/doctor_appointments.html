@@ -1,0 +1,29 @@
+{% extends 'appointments/base.html' %}
+
+{% block title %}Twoje wizyty{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2>Przyszłe wizyty</h2>
+{% if upcoming_appointments %}
+  <ul>
+    {% for appointment in upcoming_appointments %}
+      <li>{{ appointment.date }} {{ appointment.time }} - {{ appointment.doctor }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Brak przyszłych wizyt.</p>
+{% endif %}
+
+<h2>Przeszłe wizyty</h2>
+{% if past_appointments %}
+  <ul>
+    {% for appointment in past_appointments %}
+      <li>{{ appointment.date }} {{ appointment.time }} - {{ appointment.doctor }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Brak przeszłych wizyt.</p>
+{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "appointments/base.html" %}
+{% block title %}Calendar with Weekly Pagination{% endblock %}
+
+{% block content %}
+{{ start_of_week }} - {{ end_of_week }} <br>
+{{ start_of_week|date:"Y-m-d" }} - {{ end_of_week|date:"Y-m-d" }} <br>
+
+{% for doctor, schedule_week  in doctor_week_schedule.items %}
+    <table border="1">
+        <tr>
+            <th>Doktor -> {{ doctor.id }} {{ doctor.user.first_name }} -< Doktor</th>
+        </tr>
+        <tr>
+        {% for schedule_day, slots in schedule_week.items %}
+            <th>{{ schedule_day }}</th>
+
+            {% for slot in slots %}
+            <td>{{ slot.time }}{{ slot.is_taken }}{{ slot.is_past }}</td>
+            {% endfor %}
+        </tr>
+        </tr>
+
+
+
+    {% endfor %}
+{% endfor %}
+
+
+
+
+{% endblock %}

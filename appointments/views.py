@@ -17,6 +17,7 @@ from users.models import Doctor
 
 from .forms import AppointmentForm
 from .models import Appointment
+from .services.date_parser import try_parsing_date
 from .services.doctor_schedule import DoctorScheduleService
 
 
@@ -26,6 +27,27 @@ class MainView(TemplateView):
 
 class UserAppointmentsView(ListView):
     template_name = "appointments/user_appointments.html"
+    model = Appointment
+    context_object_name = "appointments"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        now_datetime = timezone.now()
+
+        upcoming_appointment = self.model.objects.filter(
+            date__gte=now_datetime.date(), time__gte=now_datetime.time()
+        ).order_by("date", "time")
+        past_appointment = self.model.objects.filter(
+            date__lte=now_datetime.date(), time__lte=now_datetime.time()
+        ).order_by("-date", "-time")
+
+        context["upcoming_appointment"] = upcoming_appointment
+        context["past_appointment"] = past_appointment
+        return context
+
+
+class DoctorAppointmentsView(ListView):
+    template_name = "appointments/doctor_appointments.html"
     model = Appointment
     context_object_name = "appointments"
 
@@ -97,7 +119,7 @@ class AppointmentCreateView(CreateView):
         time_str = self.request.GET.get("time")
 
         doctor = get_object_or_404(Doctor, id=doctor_id)
-        date = datetime.strptime(date_str, "%b. %d, %Y").date()
+        date = try_parsing_date(date_str)
         time = datetime.strptime(time_str, "%H:%M").time()
 
         kwargs["doctor"] = doctor
