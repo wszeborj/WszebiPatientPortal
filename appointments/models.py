@@ -21,12 +21,6 @@ class Appointment(models.Model):
 
     class Meta:
         ordering = ["doctor", "date", "time"]
-        # permissions = [
-        #     ("view_appointment", "Can view appointment"),
-        #     ("edit_appointment", "Can edit appointment"),
-        #     ("delete_appointment", "Can delete appointment"),
-        #     ("create_appointment", "Can create appointment"),
-        # ]
 
     def __str__(self):
         return f"Wizyta u {self.doctor} na {self.date} o {self.time}"

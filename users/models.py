@@ -26,19 +26,6 @@ class User(AbstractUser):
         blank=True,
     )
 
-    # def save(self, *args, **kwargs):
-    #     super().save(*args, **kwargs)
-    #
-    #     if self.role == User.Role.DOCTOR:
-    #         group, _ = Group.objects.get_or_create(name='doctor_group')
-    #     if self.role == User.Role.ADMIN:
-    #         group, _ = Group.objects.get_or_create(name='staff_group')
-    #     else:
-    #         group, _ = Group.objects.get_or_create(name='patient_group')
-    #     self.groups.add(group)
-    #
-    #     super().save(*args, **kwargs)
-
 
 class Patient(models.Model):
     user = models.OneToOneField(
@@ -50,7 +37,7 @@ class Patient(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
 
     def __str__(self) -> str:
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.user.first_name} {self.user.last_name}"
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

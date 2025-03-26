@@ -20,6 +20,8 @@ psycopg2-binary = "^2.9.10"
 celery = "^5.4.0"
 redis = "^5.2.1"
 flower = "^2.0.1"
+pytest = "^8.3.5"
+
 
 
 [tool.poetry.group.dev.dependencies]
@@ -29,6 +31,7 @@ sentry-sdk = "^2.19.0"
 bandit = "^1.8.0"
 ruff = "^0.8.1"
 icecream = "^2.1.4"
+factory-boy = "^3.3.3"
 
 
 [build-system]

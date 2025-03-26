@@ -4,7 +4,7 @@ from django.core.management.base import BaseCommand
 from icecream import ic
 
 from schedules.models import ScheduleDay
-from users.models import User
+from users.models import Specialization, User
 
 from ...models import Appointment
 
@@ -29,13 +29,20 @@ class Command(BaseCommand):
                 "change_scheduleday",
                 "delete_scheduleday",
                 "view_scheduleday",
+                "add_specialization",
+                "view_scheduleday",
+            ],
+            "staff_group": [
+                "delete_specialization",
+                "change_specialization",
             ],
         }
-        groups_permissions["staff_group"] = groups_permissions.get(
-            "patient_group"
-        ) + groups_permissions.get("doctor_group")
+        groups_permissions["staff_group"].extend(
+            groups_permissions.get("patient_group")
+        )
+        groups_permissions["staff_group"].extend(groups_permissions.get("doctor_group"))
 
-        perm_models = [Appointment, ScheduleDay]
+        perm_models = [Appointment, ScheduleDay, Specialization]
 
         for group_name, permissions in groups_permissions.items():
             group, created = Group.objects.get_or_create(name=group_name)

@@ -1,0 +1,166 @@
+from datetime import datetime, timedelta
+from typing import List
+
+from django.contrib.auth import get_user_model
+from django.core.management.base import BaseCommand
+from django.utils import timezone
+from faker import Faker
+
+from appointments.factories import AppointmentFactory
+from core.env import env
+from schedules.factories import ScheduleDayFactory
+from schedules.models import ScheduleDay
+from users.factories import DoctorFactory, PatientFactory
+from users.models import Doctor, User
+
+fake = Faker()
+
+
+class Command(BaseCommand):
+    help = (
+        "Generuje losowe wizyty dla 20 lekarzy i 1000 pacjentów na najbliższy miesiąc."
+    )
+
+    def handle(self, *args, **options):
+        self.stdout.write("Tworzenie superusera...")
+        self.create_super_user()
+
+        self.stdout.write("Tworzenie lekarzy...")
+        doctors = [DoctorFactory(confirmed=True) for _ in range(20)]
+
+        self.stdout.write("Tworzenie pacjentów...")
+        patients = [PatientFactory() for _ in range(100)]
+
+        self.stdout.write("Tworzenie dni grafikow i wizyt...")
+        schedule_days, appointments = generate_appointments_for_month(doctors, patients)
+
+        self.stdout.write(
+            self.style.SUCCESS(
+                f"Utworzono {len(schedule_days)} dni grafikowych oraz {len(appointments)} wizyt."
+            )
+        )
+
+    def create_super_user(self):
+        User = get_user_model()
+        if not User.objects.filter(username=env("SUPERUSER_NAME")).exists():
+            user = User.objects.create_superuser(
+                username=env("SUPERUSER_NAME"),
+                email=env("SUPERUSER_MAIL"),
+                password=env("SUPERUSER_PASSWORD"),
+                # phone="123456789",
+                # birth_date=datetime.fromisoformat("1990-12-04"),
+            )
+            self.stdout.write(
+                self.style.SUCCESS(f'Superuser "{user} created successfully.')
+            )
+        else:
+            self.stdout.write(self.style.SUCCESS("Superuser already exist."))
+
+
+def generate_slots_for_schedule_day(schedule_day: ScheduleDay):
+    slots = []
+    current_time = datetime.combine(schedule_day.work_date, schedule_day.start_time)
+    end_time = datetime.combine(schedule_day.work_date, schedule_day.end_time)
+
+    while current_time < end_time:
+        slots.append(current_time.time())
+        current_time += schedule_day.interval
+
+    return slots
+
+
+# def get_random_time_within_schedule(schedule_day: ScheduleDay):
+#     slots = generate_slots_for_schedule_day(schedule_day)
+#     return fake.random_element(slots)
+
+
+# def fill_schedule_day(schedule_day: ScheduleDay, fill_percent: float = 0.7):
+#     slots = generate_slots_for_schedule_day(schedule_day)
+#     total_slots = len(slots)
+#     slots_to_fill = int(total_slots * fill_percent)
+#
+#     selected_slots = fake.random_elements(elements=slots, length=slots_to_fill, unique=True)
+#
+#     appointments = []
+#     for slot in selected_slots:
+#         appointment = AppointmentFactory(
+#             schedule_day=schedule_day,
+#             doctor=schedule_day.doctor,
+#             date=schedule_day.work_date,
+#             time=slot
+#         )
+#         appointments.append(appointment)
+#
+#     return appointments
+#
+# def create_schedule_days_for_doctor(doctor: Doctor, start_date: Optional[datetime.date] = None, fill_percent: float = 0.7, amount_days: int = 7):
+#     if start_date is None:
+#         start_date = timezone.now().date()
+#
+#     schedule_days = []
+#     all_appointments = []
+#
+#     for i in range(amount_days):
+#         work_date = start_date + datetime.timedelta(days=i)
+#
+#         schedule_day = ScheduleDayFactory(
+#             doctor=doctor,
+#             work_date=work_date,
+#             start_time=datetime.time(8, 0),
+#             end_time=datetime.time(16, 0),
+#             interval=datetime.timedelta(minutes=15),
+#         )
+#         schedule_days.append(schedule_day)
+#
+#         appointments = fill_schedule_day(schedule_day, fill_percent=fill_percent)
+#         all_appointments.extend(appointments)
+#
+#     return schedule_days, all_appointments
+
+
+def fill_schedule_day(
+    schedule_day: ScheduleDay, patients: List[User], fill_percent: float = 0.7
+):
+    slots = generate_slots_for_schedule_day(schedule_day)
+    slots_to_fill = int(len(slots) * fill_percent)
+    selected_slots = fake.random_elements(
+        elements=slots, length=slots_to_fill, unique=True
+    )
+
+    appointments = []
+    for slot in selected_slots:
+        patient = fake.random_element(patients)
+        appointment = AppointmentFactory(
+            doctor=schedule_day.doctor,
+            user=patient.user,
+            date=schedule_day.work_date,
+            time=slot,
+        )
+        appointments.append(appointment)
+    return appointments
+
+
+def generate_appointments_for_month(
+    doctors: List[Doctor], patients: List[User], fill_percent: float = 0.7
+):
+    start_date = timezone.now().date()
+    schedule_days = []
+    all_appointments = []
+
+    for doctor in doctors:
+        for day_offset in range(30):
+            work_date = start_date + timedelta(days=day_offset)
+
+            schedule_day = ScheduleDayFactory(
+                doctor=doctor,
+                work_date=work_date,
+                start_time=timezone.datetime.strptime("08:00", "%H:%M").time(),
+                end_time=timezone.datetime.strptime("16:00", "%H:%M").time(),
+                interval=timedelta(minutes=15),
+            )
+            schedule_days.append(schedule_day)
+
+            appointments = fill_schedule_day(schedule_day, patients, fill_percent)
+            all_appointments.extend(appointments)
+
+    return schedule_days, all_appointments

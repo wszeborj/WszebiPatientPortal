@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView
 from django.contrib.sites.shortcuts import get_current_site
@@ -34,22 +34,26 @@ class RegisterUserFormView(FormView):
         return super().form_valid(form)
 
 
-class CompleteDoctorDataView(LoginRequiredMixin, FormView):
+class CompleteDoctorDataView(PermissionRequiredMixin, FormView):
     template_name = "users/register.html"
     form_class = DoctorRegistrationForm
     success_url = reverse_lazy("users:login")
-    # todo zrobic to na permissionach, z modelem Specialization
+    permission_required = (
+        "schedules.add_scheduleday",
+        "schedules.change_scheduleday",
+        "schedules.delete_scheduleday",
+        "schedules.view_scheduleday",
+    )
 
-    def dispatch(self, request, *args, **kwargs):
-        if request.user.role != User.Role.DOCTOR:
-            messages.warning(request, "Nie masz uprawnień do tego działania.")
-            return redirect("users:login")
-        return super().dispatch(request, *args, **kwargs)
+    # def dispatch(self, request, *args, **kwargs):
+    #     if request.user.role != User.Role.DOCTOR:
+    #         messages.warning(request, "Nie masz uprawnień do tego działania.")
+    #         return redirect("users:login")
+    #     return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         doctor = form.save(commit=False)
         doctor.user = self.request.user
-
         doctor.save()
         form.save_m2m()
         messages.success(self.request, "Uzupełniłeś dane jako lekarz!")
