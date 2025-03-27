@@ -1,4 +1,5 @@
 import factory
+from django.contrib.auth.models import Group
 from factory.django import DjangoModelFactory
 from faker import Faker
 
@@ -34,6 +35,22 @@ class UserFactory(DjangoModelFactory):
             return
         self.is_staff = self.role == User.Role.ADMIN
         self.save()
+
+    @factory.post_generation
+    def assign_group(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        role_to_group = {
+            User.Role.PATIENT: "patient_group",
+            User.Role.DOCTOR: "doctor_group",
+            User.Role.ADMIN: "staff_group",
+        }
+
+        group_name = role_to_group.get(self.role)
+        if group_name:
+            group, _ = Group.objects.get_or_create(name=group_name)
+            self.groups.add(group)
 
 
 class PatientFactory(DjangoModelFactory):

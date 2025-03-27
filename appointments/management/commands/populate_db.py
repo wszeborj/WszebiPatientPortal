@@ -13,6 +13,8 @@ from schedules.models import ScheduleDay
 from users.factories import DoctorFactory, PatientFactory
 from users.models import Doctor, User
 
+from .create_permission_groups import create_permission_groups
+
 fake = Faker()
 
 
@@ -22,21 +24,24 @@ class Command(BaseCommand):
     )
 
     def handle(self, *args, **options):
-        self.stdout.write("Tworzenie superusera...")
+        self.stdout.write("Creating superuser...")
         self.create_super_user()
 
-        self.stdout.write("Tworzenie lekarzy...")
+        create_permission_groups()
+        self.stdout.write("Creating permission groups...")
+
+        self.stdout.write("Creating doctors...")
         doctors = [DoctorFactory(confirmed=True) for _ in range(20)]
 
-        self.stdout.write("Tworzenie pacjentów...")
+        self.stdout.write("Creating patients...")
         patients = [PatientFactory() for _ in range(100)]
 
-        self.stdout.write("Tworzenie dni grafikow i wizyt...")
+        self.stdout.write("Creating schedule days and appointments...")
         schedule_days, appointments = generate_appointments_for_month(doctors, patients)
 
         self.stdout.write(
             self.style.SUCCESS(
-                f"Utworzono {len(schedule_days)} dni grafikowych oraz {len(appointments)} wizyt."
+                f"Created {len(schedule_days)} schedule days, {len(appointments)} appointments."
             )
         )
 
@@ -67,55 +72,6 @@ def generate_slots_for_schedule_day(schedule_day: ScheduleDay):
         current_time += schedule_day.interval
 
     return slots
-
-
-# def get_random_time_within_schedule(schedule_day: ScheduleDay):
-#     slots = generate_slots_for_schedule_day(schedule_day)
-#     return fake.random_element(slots)
-
-
-# def fill_schedule_day(schedule_day: ScheduleDay, fill_percent: float = 0.7):
-#     slots = generate_slots_for_schedule_day(schedule_day)
-#     total_slots = len(slots)
-#     slots_to_fill = int(total_slots * fill_percent)
-#
-#     selected_slots = fake.random_elements(elements=slots, length=slots_to_fill, unique=True)
-#
-#     appointments = []
-#     for slot in selected_slots:
-#         appointment = AppointmentFactory(
-#             schedule_day=schedule_day,
-#             doctor=schedule_day.doctor,
-#             date=schedule_day.work_date,
-#             time=slot
-#         )
-#         appointments.append(appointment)
-#
-#     return appointments
-#
-# def create_schedule_days_for_doctor(doctor: Doctor, start_date: Optional[datetime.date] = None, fill_percent: float = 0.7, amount_days: int = 7):
-#     if start_date is None:
-#         start_date = timezone.now().date()
-#
-#     schedule_days = []
-#     all_appointments = []
-#
-#     for i in range(amount_days):
-#         work_date = start_date + datetime.timedelta(days=i)
-#
-#         schedule_day = ScheduleDayFactory(
-#             doctor=doctor,
-#             work_date=work_date,
-#             start_time=datetime.time(8, 0),
-#             end_time=datetime.time(16, 0),
-#             interval=datetime.timedelta(minutes=15),
-#         )
-#         schedule_days.append(schedule_day)
-#
-#         appointments = fill_schedule_day(schedule_day, fill_percent=fill_percent)
-#         all_appointments.extend(appointments)
-#
-#     return schedule_days, all_appointments
 
 
 def fill_schedule_day(

@@ -19,8 +19,15 @@ class ScheduleCalendarView(PermissionRequiredMixin, TemplateView):
     # permission_denied_message = "You have no access to this calendar"
 
     def get_context_data(self, **kwargs):
-        doctor = self.request.user.doctor_profile
-        schedule_days = ScheduleDay.objects.filter(doctor=doctor)
+        user = self.request.user
+        if hasattr(user, "doctor_profile"):
+            doctor = user.doctor_profile
+            schedule_days = ScheduleDay.objects.filter(doctor=doctor)
+        elif self.request.user.is_staff:
+            schedule_days = ScheduleDay.objects.all()
+        else:
+            schedule_days = []
+
         context = super().get_context_data(**kwargs)
         context["schedule_days"] = schedule_days
         return context

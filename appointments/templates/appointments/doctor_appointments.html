@@ -15,6 +15,17 @@
   <p>Brak przyszłych wizyt.</p>
 {% endif %}
 
+<h2>Wizyty Twoich pacjentów</h2>
+{% if doctor_upcoming_appointments %}
+  <ul>
+    {% for appointment in doctor_upcoming_appointments %}
+      <li>{{ appointment.date }} {{ appointment.time }} - Pacjent: {{ appointment.patient }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Brak przyszłych wizyt Twoich pacjentów.</p>
+{% endif %}
+
 <h2>Przeszłe wizyty</h2>
 {% if past_appointments %}
   <ul>
@@ -24,6 +35,17 @@
   </ul>
 {% else %}
   <p>Brak przeszłych wizyt.</p>
+{% endif %}
+
+<h2>Historia wizyt Twoich pacjentów</h2>
+{% if doctor_past_appointments %}
+  <ul>
+    {% for appointment in doctor_past_appointments %}
+      <li>{{ appointment.date }} {{ appointment.time }} - Pacjent: {{ appointment.patient }}</li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p>Brak historii wizyt Twoich pacjentów.</p>
 {% endif %}
 </div>
 {% endblock %}

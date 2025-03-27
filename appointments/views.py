@@ -2,6 +2,7 @@ from datetime import date, datetime, timedelta
 from typing import Tuple
 
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
 from django.utils import timezone
@@ -106,7 +107,7 @@ class AppointmentListView(ListView):
         return context
 
 
-class AppointmentCreateView(CreateView):
+class AppointmentCreateView(LoginRequiredMixin, CreateView):
     model = Appointment
     form_class = AppointmentForm
     template_name = "appointments/appointment_form.html"
