@@ -3,8 +3,12 @@
 
 {% block content %}
 <div class="container mt-4">
+    <form method="get" class="form-inline">
+    {{ filter.form.as_p }}
+    <button type="submit" class="btn btn-primary">Filter</button>
+    <a href="{% url 'appointments:appointments-list' %}" class="button">Clear filter</a>
+</form>
     <h1 class="text-center">Weekly Doctor Schedule</h1>
-
     <!-- Nawigacja paginacji -->
     <div class="d-flex justify-content-between align-items-center mb-3">
         <a href="?week={{ previous_week }}" class="btn btn-primary {% if not previous_week %}disabled{% endif %}">
@@ -19,7 +23,8 @@
     <!-- Harmonogram dla każdego lekarza -->
     {% for doctor, schedule_week in doctor_week_schedule.items %}
     <div class="mb-5">
-        <h2 class="text-center">{{ doctor.user.first_name }} {{ doctor.user.last_name }}</h2>
+<!--        <h2 class="text-center">{{ doctor.user.first_name }} {{ doctor.user.last_name }}</h2>-->
+        <h2 class="text-center">{{ doctor }}</h2>
 
         <div class="row row-cols-7">
             {% for day, slots in schedule_week.items %}

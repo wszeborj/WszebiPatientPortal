@@ -45,12 +45,6 @@ class CompleteDoctorDataView(PermissionRequiredMixin, FormView):
         "schedules.view_scheduleday",
     )
 
-    # def dispatch(self, request, *args, **kwargs):
-    #     if request.user.role != User.Role.DOCTOR:
-    #         messages.warning(request, "Nie masz uprawnień do tego działania.")
-    #         return redirect("users:login")
-    #     return super().dispatch(request, *args, **kwargs)
-
     def form_valid(self, form):
         doctor = form.save(commit=False)
         doctor.user = self.request.user
@@ -96,9 +90,11 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         user = self.request.user
         if user.role == User.Role.PATIENT:
-            return redirect("appointments:user_appointments")
-        if user.role == User.Role.DOCTOR:
-            return redirect("appointments:doctor_appointments")
+            return reverse_lazy("appointments:user_appointments")
+        elif user.role == User.Role.DOCTOR:
+            return reverse_lazy("appointments:doctor_appointments")
+        else:
+            return reverse_lazy("appointments:main")
 
 
 class UserProcessing:

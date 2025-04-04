@@ -12,12 +12,13 @@ from ..models import Appointment
 class DoctorScheduleService:
     @staticmethod
     def get_doctor_schedule_week(
-        start_of_week: date, end_of_week: date
+        start_of_week: date, end_of_week: date, doctors: Doctor
     ) -> Dict[Doctor, Dict[date, List[Dict[str, str | bool]]]]:
-        all_doctors = Doctor.objects.all()
+        if doctors is None:
+            doctors = Doctor.objects.all()
 
         doctor_week_schedule = {}
-        for doctor in all_doctors:
+        for doctor in doctors:
             schedule_days = ScheduleDay.objects.filter(
                 doctor=doctor, work_date__range=[start_of_week, end_of_week]
             )
