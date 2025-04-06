@@ -2,6 +2,7 @@ from datetime import date, datetime, timedelta
 from typing import Tuple
 
 import django_filters
+from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
@@ -72,6 +73,9 @@ class DoctorAppointmentsView(ListView):
 
 
 class DoctorFilter(django_filters.FilterSet):
+    doctor_id = django_filters.NumberFilter(
+        field_name="id", label="", widget=forms.HiddenInput()
+    )
     specialization = django_filters.ModelMultipleChoiceFilter(
         queryset=Specialization.objects.all().order_by("name"), label="Specialization"
     )

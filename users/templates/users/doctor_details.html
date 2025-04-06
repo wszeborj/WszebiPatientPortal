@@ -1,0 +1,50 @@
+{% extends 'appointments/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}
+    {{ doctor }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">{{ doctor }}</h1>
+
+    <div class="row">
+        <!-- Zdjęcie po lewej -->
+        <div class="col-md-4">
+            {% if doctor.user.profile_photo.url %}
+                <img src="{{ doctor.user.profile_photo.url }}" alt="Doctor photo" class="img-fluid rounded-circle" style="width: 150px; height: 150px; object-fit: cover;">
+            {% else %}
+                <div class="rounded-circle bg-secondary text-white d-flex justify-content-center align-items-center"
+                     style="width: 150px; height: 150px; font-size: 36px;">
+                    {{ doctor.user.first_name|slice:":1" }}{{ doctor.user.last_name|slice:":1" }}
+                </div>
+            {% endif %}
+        </div>
+
+        <!-- Specjalizacje i opis po prawej -->
+        <div class="col-md-8">
+            <h4>Specializations</h4>
+            <ul>
+                {% for specialization in doctor.specialization.all %}
+                    <li>
+                        <a href="{% url 'users:specialization-details' specialization.id %}">
+                        {{ specialization.name }}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <h4 class="mt-4">Description</h4>
+            <p>{{ doctor.description|linebreaks }}</p>
+        </div>
+        <hr>
+    <div class="mt-4">
+        <a href="{% url 'appointments:appointments-list' %}?doctor_id={{ doctor.id }}" class="btn btn-primary">
+            Make appointment
+        </a>
+    </div>
+    </div>
+</div>
+{% endblock %}

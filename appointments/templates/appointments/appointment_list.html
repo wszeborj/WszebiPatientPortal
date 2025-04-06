@@ -23,8 +23,12 @@
     <!-- Harmonogram dla każdego lekarza -->
     {% for doctor, schedule_week in doctor_week_schedule.items %}
     <div class="mb-5">
-<!--        <h2 class="text-center">{{ doctor.user.first_name }} {{ doctor.user.last_name }}</h2>-->
-        <h2 class="text-center">{{ doctor }}</h2>
+
+        <h2 class="text-center">
+            <a href="{% url 'users:doctor-details' doctor.id %}">
+                {{ doctor }}
+            </a>
+        </h2>
 
         <div class="row row-cols-7">
             {% for day, slots in schedule_week.items %}

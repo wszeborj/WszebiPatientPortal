@@ -1,0 +1,23 @@
+{% extends 'appointments/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}
+    {{ doctor }}
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">{{ specialization }}</h1>
+        <div class="col-md-8">
+            <p>{{ specialization.description|linebreaks }}</p>
+        </div>
+    <hr>
+    Find doctors with specialization {{ specialization }}:
+    <div class="mt-4">
+    <a href="{% url 'appointments:appointments-list' %}?specialization={{ specialization.id }}" class="btn btn-primary">
+        Make appointment
+    </a>
+    </div>
+</div>
+{% endblock %}

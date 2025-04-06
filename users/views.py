@@ -9,10 +9,10 @@ from django.template.loader import render_to_string
 from django.urls import reverse_lazy
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
-from django.views.generic import FormView, View
+from django.views.generic import DetailView, FormView, ListView, View
 
 from .forms import DoctorRegistrationForm, UserRegistrationForm
-from .models import User
+from .models import Doctor, Specialization, User
 
 
 class RegisterUserFormView(FormView):
@@ -53,6 +53,32 @@ class CompleteDoctorDataView(PermissionRequiredMixin, FormView):
         messages.success(self.request, "Uzupełniłeś dane jako lekarz!")
 
         return super().form_valid(form)
+
+
+class DoctorListView(ListView):
+    template_name = "users/doctor_list.html"
+    model = Doctor
+    context_object_name = "doctors"
+    queryset = Doctor.objects.select_related("user").order_by("user__last_name")
+
+
+class DoctorDetailsView(DetailView):
+    template_name = "users/doctor_details.html"
+    model = Doctor
+    context_object_name = "doctor"
+
+
+class SpecializationListView(ListView):
+    template_name = "users/specialization_list.html"
+    model = Specialization
+    context_object_name = "specializations"
+    queryset = Specialization.objects.all().order_by("name")
+
+
+class SpecializationDetailsView(DetailView):
+    template_name = "users/specialization_details.html"
+    model = Specialization
+    context_object_name = "specialization"
 
 
 class ActivateView(View):

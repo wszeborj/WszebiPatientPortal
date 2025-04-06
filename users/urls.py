@@ -12,6 +12,26 @@ urlpatterns = [
         views.CompleteDoctorDataView.as_view(),
         name="complete-doctor-data",
     ),
+    path(
+        "doctors/",
+        views.DoctorListView.as_view(),
+        name="doctor-list",
+    ),
+    path(
+        "doctor/<int:pk>",
+        views.DoctorDetailsView.as_view(),
+        name="doctor-details",
+    ),
+    path(
+        "specializations/",
+        views.SpecializationListView.as_view(),
+        name="specialization-list",
+    ),
+    path(
+        "specialization/<int:pk>",
+        views.SpecializationDetailsView.as_view(),
+        name="specialization-details",
+    ),
     path("activate/<uidb64>/<token>", views.ActivateView.as_view(), name="activate"),
     path(
         "login/",

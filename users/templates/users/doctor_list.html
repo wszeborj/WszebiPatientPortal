@@ -1,0 +1,24 @@
+{% extends 'appointments/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    All Doctors
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">List of Doctors</h1>
+
+    <ul class="list-group">
+        {% for doctor in doctors %}
+            <li class="list-group-item">
+                <a href="{% url 'users:doctor-details' doctor.id %}">
+                    {{ doctor }}
+                </a>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No doctors found.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

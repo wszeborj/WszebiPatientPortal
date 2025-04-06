@@ -1,0 +1,24 @@
+{% extends 'appointments/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+    All specializations
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">List of specializations</h1>
+
+    <ul class="list-group">
+        {% for specialization in specializations %}
+            <li class="list-group-item">
+                <a href="{% url 'users:specialization-details' specialization.id %}">
+                    {{ specialization }}
+                </a>
+            </li>
+        {% empty %}
+            <li class="list-group-item">No specializations found.</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
