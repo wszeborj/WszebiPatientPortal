@@ -43,10 +43,27 @@ class Patient(models.Model):
         super().save(*args, **kwargs)
 
 
+class Department(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    description = models.TextField(
+        blank=False,
+        help_text="Details about the department",
+        default="Details about the department",
+    )
+
+    def __str__(self):
+        return self.name
+
+
 class Specialization(models.Model):
-    name = models.CharField(max_length=100, help_text="Specialization name")
+    name = models.CharField(
+        max_length=100, help_text="Specialization name", unique=True
+    )
     description = models.TextField(
         blank=True, help_text="Details about the specialization"
+    )
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE, related_name="specializations"
     )
 
     def __str__(self) -> str:

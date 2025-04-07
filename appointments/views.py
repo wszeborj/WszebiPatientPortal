@@ -29,6 +29,14 @@ from .services.doctor_schedule import DoctorScheduleService
 class MainView(TemplateView):
     template_name = "appointments/main.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        doctors_amount = Doctor.objects.count()
+        context[doctors_amount] = doctors_amount
+
+        return context
+
 
 class UserAppointmentsView(ListView):
     template_name = "appointments/user_appointments.html"

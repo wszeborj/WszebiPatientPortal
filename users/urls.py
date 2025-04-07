@@ -23,9 +23,9 @@ urlpatterns = [
         name="doctor-details",
     ),
     path(
-        "specializations/",
-        views.SpecializationListView.as_view(),
-        name="specialization-list",
+        "departments/",
+        views.DepartmentListView.as_view(),
+        name="department-list",
     ),
     path(
         "specialization/<int:pk>",

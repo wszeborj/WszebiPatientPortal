@@ -55,7 +55,7 @@ class PatientRegistrationForm(forms.ModelForm):
 class DoctorRegistrationForm(forms.ModelForm):
     specialization = forms.ModelMultipleChoiceField(
         queryset=Specialization.objects.all(),
-        widget=forms.CheckboxSelectMultiple,
+        widget=forms.SelectMultiple,
         required=True,
         help_text="Select doctor specializations",
     )

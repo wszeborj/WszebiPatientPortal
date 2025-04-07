@@ -17,6 +17,77 @@ from .create_permission_groups import create_permission_groups
 
 fake = Faker()
 
+SPECIALIZATIONS_BY_DEPARTMENT = {
+    "Cardiology Department": ["Cardiology", "Pediatric Cardiology", "Cardiac Surgery"],
+    "Surgery Department": [
+        "Surgery",
+        "Pediatric Surgery",
+        "Thoracic Surgery",
+        "Vascular Surgery",
+        "Oncological Surgery",
+        "Plastic Surgery",
+        "Maxillofacial Surgery",
+        "Neurosurgery",
+        "Orthopedics and Traumatology",
+        "Urology",
+        "Pediatric Urology",
+    ],
+    "Neurology Department": ["Neurology", "Pediatric Neurology"],
+    "Oncology Department": [
+        "Oncology",
+        "Gynecologic Oncology",
+        "Pediatric Oncology and Hematology",
+        "Hematology",
+    ],
+    "Internal Medicine Department": [
+        "Internal Medicine",
+        "Endocrinology",
+        "Diabetology",
+        "Nephrology",
+        "Infectious Diseases",
+        "Hypertensiology",
+        "Rheumatology",
+    ],
+    "Pediatrics Department": ["Pediatrics", "Neonatology"],
+    "Radiology Department": ["Radiology", "Nuclear Medicine"],
+    "Mental Health Department": [
+        "Psychiatry",
+        "Sexology",
+        "Clinical Psychology",
+        "Clinical Pharmacology",
+    ],
+    "Women's Health Department": ["Obstetrics and Gynecology"],
+    "Dentistry Department": ["Dentistry"],
+    "Emergency Department": ["Emergency Medicine"],
+    "Immunology Department": ["Clinical Immunology"],
+    "Genetics Department": ["Clinical Genetics"],
+    "Pathology Department": ["Pathomorphology"],
+    "Rehabilitation Department": ["Physiotherapy", "Medical Rehabilitation"],
+    "General Department": [
+        "Dermatology",
+        "Gastroenterology",
+        "Allergology",
+        "Anesthesiology",
+        "Angiology",
+        "Audiology",
+        "Balneology",
+        "Epidemiology",
+        "Laboratory Diagnostics",
+        "Phthisiology",
+        "Laryngology",
+        "Occupational Medicine",
+        "Family Medicine",
+        "Forensic Medicine",
+        "Sports Medicine",
+        "Medical Microbiology",
+        "Ophthalmology",
+        "Otorhinolaryngology",
+        "Clinical Toxicology",
+        "Clinical Transfusiology",
+        "Clinical Transplantology",
+    ],
+}
+
 
 class Command(BaseCommand):
     help = (

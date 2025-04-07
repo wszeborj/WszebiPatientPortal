@@ -70,7 +70,7 @@
             <li><a href="{% url 'appointments:main' %}">Home</a></li>
             <li><a href="#about">About</a></li>
             <li><a href="#services">Services</a></li>
-            <li><a href="{% url 'users:specialization-list' %}">Departments</a></li>
+            <li><a href="{% url 'users:department-list' %}">Departments</a></li>
             <li><a href="{% url 'users:doctor-list' %}">Doctors</a></li>
             <li class="dropdown"><a href="#"><span>Dropdown</span> <i class="bi bi-chevron-down toggle-dropdown"></i></a>
               <ul>
@@ -142,7 +142,7 @@
       <nav class="breadcrumbs">
         <div class="container">
           <ol>
-            <li><a href=#>Home</a></li>
+            <li><a href="{% url 'appointments:main' %}">Home</a></li>
             <li class="current">
               {% if request.resolver_match.url_name %}
                 {{ request.resolver_match.url_name|capfirst }}
@@ -200,7 +200,7 @@
         <div class="col-lg-2 col-md-3 footer-links">
           <h4>Useful Links</h4>
           <ul>
-            <li><a href="#">Home</a></li>
+            <li><a href="{% url 'appointments:main' %}">Home</a></li>
             <li><a href="#">About us</a></li>
             <li><a href="#">Services</a></li>
             <li><a href="#">Terms of service</a></li>

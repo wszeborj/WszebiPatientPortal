@@ -1,5 +1,4 @@
 from django.contrib import messages
-from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView
 from django.contrib.sites.shortcuts import get_current_site
@@ -12,7 +11,9 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.views.generic import DetailView, FormView, ListView, View
 
 from .forms import DoctorRegistrationForm, UserRegistrationForm
-from .models import Doctor, Specialization, User
+from .models import Department, Doctor, Specialization, User
+
+# from django.contrib.auth.mixins import PermissionRequiredMixin
 
 
 class RegisterUserFormView(FormView):
@@ -34,16 +35,10 @@ class RegisterUserFormView(FormView):
         return super().form_valid(form)
 
 
-class CompleteDoctorDataView(PermissionRequiredMixin, FormView):
+class CompleteDoctorDataView(FormView):
     template_name = "users/register.html"
     form_class = DoctorRegistrationForm
     success_url = reverse_lazy("users:login")
-    permission_required = (
-        "schedules.add_scheduleday",
-        "schedules.change_scheduleday",
-        "schedules.delete_scheduleday",
-        "schedules.view_scheduleday",
-    )
 
     def form_valid(self, form):
         doctor = form.save(commit=False)
@@ -68,11 +63,24 @@ class DoctorDetailsView(DetailView):
     context_object_name = "doctor"
 
 
-class SpecializationListView(ListView):
-    template_name = "users/specialization_list.html"
-    model = Specialization
-    context_object_name = "specializations"
-    queryset = Specialization.objects.all().order_by("name")
+class DepartmentListView(ListView):
+    model = Department
+    template_name = "users/department_list.html"
+    context_object_name = "departments"
+    ordering = "name"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        departments_with_specializations = {}
+
+        for department in Department.objects.all():
+            departments_with_specializations[
+                department
+            ] = department.specializations.all().order_by("name")
+
+        context["departments_with_specializations"] = departments_with_specializations
+        return context
 
 
 class SpecializationDetailsView(DetailView):

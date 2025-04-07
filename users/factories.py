@@ -3,7 +3,7 @@ from django.contrib.auth.models import Group
 from factory.django import DjangoModelFactory
 from faker import Faker
 
-from .models import Doctor, Patient, Specialization, User
+from .models import Department, Doctor, Patient, Specialization, User
 
 fake = Faker("pl_PL")
 
@@ -58,6 +58,31 @@ class PatientFactory(DjangoModelFactory):
         model = Patient
 
     user = factory.SubFactory(UserFactory, role=User.Role.PATIENT)
+
+
+class DepartmentFactory(DjangoModelFactory):
+    class Meta:
+        model = Department
+        django_get_or_create = ("name",)
+
+    name = factory.Iterator(
+        [
+            "Surgery Department",
+            "Cardiology Department",
+            "Pediatrics Department",
+            "Neurology Department",
+            "Oncology Department",
+            "Internal Medicine Department",
+            "Mental Health Department",
+            "Imaging Department",
+            "Women's Health Department",
+            "Dentistry Department",
+            "Urology Department",
+            "Emergency Department",
+            "General Department",
+        ]
+    )
+    description = factory.Faker("text", max_nb_chars=200)
 
 
 class SpecializationFactory(DjangoModelFactory):
@@ -134,7 +159,8 @@ class SpecializationFactory(DjangoModelFactory):
             "Pediatric Urology",
         ]
     )
-    description = factory.Faker("paragraph")
+    description = factory.Faker("text", max_nb_chars=200)
+    department = factory.SubFactory(DepartmentFactory)
 
 
 class DoctorFactory(DjangoModelFactory):
