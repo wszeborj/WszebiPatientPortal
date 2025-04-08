@@ -20,7 +20,7 @@ class User(AbstractUser):
     state = models.CharField(max_length=50, help_text="Patient's state of residence")
     postal_code = models.CharField(max_length=6, help_text="Patient's postal code")
     avatar = models.ImageField(
-        upload_to="avatar of user",
+        upload_to="avatar_of_user",
         help_text="Image of user's avatar.",
         max_length=255,
         blank=True,
@@ -49,6 +49,12 @@ class Department(models.Model):
         blank=False,
         help_text="Details about the department",
         default="Details about the department",
+    )
+    photo = models.ImageField(
+        upload_to="departmet_img",
+        help_text="Image of department.",
+        max_length=255,
+        blank=True,
     )
 
     def __str__(self):

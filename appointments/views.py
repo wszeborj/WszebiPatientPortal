@@ -18,7 +18,7 @@ from django.views.generic import (
 )
 from django_filters.views import FilterView
 
-from users.models import Doctor, Specialization
+from users.models import Department, Doctor, Specialization
 
 from .forms import AppointmentForm
 from .models import Appointment
@@ -34,6 +34,9 @@ class MainView(TemplateView):
 
         doctors_amount = Doctor.objects.count()
         context[doctors_amount] = doctors_amount
+
+        departments = Department.objects.all()
+        context["departments"] = departments
 
         return context
 

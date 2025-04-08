@@ -83,6 +83,7 @@ class DepartmentFactory(DjangoModelFactory):
         ]
     )
     description = factory.Faker("text", max_nb_chars=200)
+    photo = factory.django.ImageField(color="green")
 
 
 class SpecializationFactory(DjangoModelFactory):
