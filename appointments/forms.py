@@ -38,3 +38,12 @@ class AppointmentForm(forms.ModelForm):
             raise forms.ValidationError(
                 "The specified appointment overlaps with an existing one. Please choose another one."
             )
+
+
+class AppointmentNoteForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ["notes"]
+        widgets = {
+            "notes": forms.Textarea(attrs={"rows": 10, "class": "form-control"}),
+        }

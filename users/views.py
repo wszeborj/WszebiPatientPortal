@@ -124,9 +124,9 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         user = self.request.user
         if user.role == User.Role.PATIENT:
-            return reverse_lazy("appointments:user_appointments")
+            return reverse_lazy("appointments:user-appointments")
         elif user.role == User.Role.DOCTOR:
-            return reverse_lazy("appointments:doctor_appointments")
+            return reverse_lazy("appointments:doctor-appointments")
         else:
             return reverse_lazy("appointments:main")
 

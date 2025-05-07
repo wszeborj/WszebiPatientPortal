@@ -159,7 +159,7 @@ def fill_schedule_day(
         patient = fake.random_element(patients)
         appointment = AppointmentFactory(
             doctor=schedule_day.doctor,
-            user=patient.user,
+            user=patient.user.patient_profile,
             date=schedule_day.work_date,
             time=slot,
         )

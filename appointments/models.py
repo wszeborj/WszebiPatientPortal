@@ -6,7 +6,7 @@ class Appointment(models.Model):
         "users.Doctor", on_delete=models.CASCADE, related_name="appointments"
     )
     user = models.ForeignKey(
-        "users.User",
+        "users.Patient",
         on_delete=models.CASCADE,
         related_name="appointments",
     )

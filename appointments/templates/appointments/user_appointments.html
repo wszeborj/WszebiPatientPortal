@@ -1,29 +1,46 @@
 {% extends 'appointments/base.html' %}
 
-{% block title %}Twoje wizyty{% endblock %}
+{% block title %}Your appointments{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-  <h2>Przyszłe wizyty</h2>
-{% if upcoming_appointments %}
-  <ul>
-    {% for appointment in upcoming_appointments %}
-      <li>{{ appointment.date }} {{ appointment.time }} - {{ appointment.doctor }}</li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Brak przyszłych wizyt.</p>
-{% endif %}
 
-<h2>Przeszłe wizyty</h2>
-{% if past_appointments %}
-  <ul>
-    {% for appointment in past_appointments %}
-      <li>{{ appointment.date }} {{ appointment.time }} - {{ appointment.doctor }}</li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Brak przeszłych wizyt.</p>
-{% endif %}
+  <h2>Your upcoming appointments as patient</h2>
+  {% if upcoming_appointment %}
+    <ul class="list-group mb-4">
+      {% for appointment in upcoming_appointment %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ appointment.date }} {{ appointment.time }}</strong> – Doctor: {{ appointment.doctor }}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No upcoming appointments as patient.</p>
+  {% endif %}
+
+  <h2>Your past appointments as patient</h2>
+  {% if past_appointment %}
+    <ul class="list-group mb-4">
+      {% for appointment in past_appointment %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ appointment.date }} {{ appointment.time }}</strong> – Doctor: {{ appointment.doctor }}
+          </div>
+          <div class="d-flex align-items-center">
+            {% if appointment.notes %}
+              <a href="{% url 'appointments:appointment-note' appointment.pk %}" class="btn btn-info btn-sm">
+                View note
+              </a>
+            {% endif %}
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No past appointments as patient.</p>
+  {% endif %}
+
 </div>
 {% endblock %}

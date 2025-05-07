@@ -5,7 +5,7 @@ from django.utils import timezone
 from factory.django import DjangoModelFactory
 from faker import Faker
 
-from users.factories import DoctorFactory, UserFactory
+from users.factories import DoctorFactory, PatientFactory
 
 from .models import Appointment
 
@@ -17,7 +17,7 @@ class AppointmentFactory(DjangoModelFactory):
         model = Appointment
 
     doctor = factory.SubFactory(DoctorFactory)
-    user = factory.SubFactory(UserFactory)
+    user = factory.SubFactory(PatientFactory)
     date = factory.LazyFunction(lambda: timezone.now().date())
     time = factory.LazyFunction(
         lambda: datetime.time(hour=fake.random_int(min=8, max=16), minute=0)

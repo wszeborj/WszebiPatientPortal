@@ -1,51 +1,60 @@
 {% extends 'appointments/base.html' %}
 
-{% block title %}Twoje wizyty{% endblock %}
+{% block title %}Your appointments{% endblock %}
 
 {% block content %}
 <div class="container mt-5">
-  <h2>Przyszłe wizyty</h2>
-{% if upcoming_appointments %}
-  <ul>
-    {% for appointment in upcoming_appointments %}
-      <li>{{ appointment.date }} {{ appointment.time }} - {{ appointment.doctor }}</li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Brak przyszłych wizyt.</p>
-{% endif %}
 
-<h2>Wizyty Twoich pacjentów</h2>
-{% if doctor_upcoming_appointments %}
-  <ul>
-    {% for appointment in doctor_upcoming_appointments %}
-      <li>{{ appointment.date }} {{ appointment.time }} - Pacjent: {{ appointment.patient }}</li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Brak przyszłych wizyt Twoich pacjentów.</p>
-{% endif %}
+  <h2>Your upcoming appointment as doctor</h2>
+  {% if upcoming_appointment %}
+    <ul class="list-group mb-4">
+      {% for appointment in upcoming_appointment %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          <div>
+            <strong>{{ appointment.date }} {{ appointment.time }}</strong> – Patient: {{ appointment.user }}
+          </div>
+          <div class="d-flex align-items-center">
+          <a href="{% url 'appointments:appointment-note-update' appointment.pk %}" class="btn btn-sm btn-secondary mr-2">
+            {% if appointment.notes %}
+              Update note
+            {% else %}
+              Create note
+            {% endif %}
+          </a>
+          <form method="post" action="{% url 'appointments:appointment-delete' appointment.pk %}" class="m-0">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-sm">Delete appointment</button>
+          </form>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>No upcoming appointments as doctor.</p>
+  {% endif %}
 
-<h2>Przeszłe wizyty</h2>
-{% if past_appointments %}
-  <ul>
-    {% for appointment in past_appointments %}
-      <li>{{ appointment.date }} {{ appointment.time }} - {{ appointment.doctor }}</li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Brak przeszłych wizyt.</p>
-{% endif %}
+  <h2>Your past appointment as doctor</h2>
+  {% if past_appointment %}
+    <ul class="list-group mb-4">
+      {% for appointment in past_appointment %}
+    <li class="list-group-item d-flex justify-content-between align-items-center">
+      <div>
+        <strong>{{ appointment.date }} {{ appointment.time }}</strong> – Patient: {{ appointment.user }}
+      </div>
+      <div class="d-flex align-items-center">
+        <a href="{% url 'appointments:appointment-note-update' appointment.pk %}" class="btn btn-sm btn-secondary mr-2">
+          {% if appointment.notes %}
+            Update note
+          {% else %}
+            Create note
+          {% endif %}
+        </a>
+      </div>
+    </li>
+  {% endfor %}
+    </ul>
+  {% else %}
+    <p>No past appointments as doctor</p>
+  {% endif %}
 
-<h2>Historia wizyt Twoich pacjentów</h2>
-{% if doctor_past_appointments %}
-  <ul>
-    {% for appointment in doctor_past_appointments %}
-      <li>{{ appointment.date }} {{ appointment.time }} - Pacjent: {{ appointment.patient }}</li>
-    {% endfor %}
-  </ul>
-{% else %}
-  <p>Brak historii wizyt Twoich pacjentów.</p>
-{% endif %}
 </div>
 {% endblock %}

@@ -5,6 +5,8 @@ import django_filters
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+# from django.db.models import DateTimeField, ExpressionWrapper, F
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -12,6 +14,7 @@ from django.utils import timezone
 from django.views.generic import (
     CreateView,
     DeleteView,
+    DetailView,
     ListView,
     TemplateView,
     UpdateView,
@@ -20,7 +23,7 @@ from django_filters.views import FilterView
 
 from users.models import Department, Doctor, Specialization
 
-from .forms import AppointmentForm
+from .forms import AppointmentForm, AppointmentNoteForm
 from .models import Appointment
 from .services.date_parser import try_parsing_date
 from .services.doctor_schedule import DoctorScheduleService
@@ -46,19 +49,49 @@ class UserAppointmentsView(ListView):
     model = Appointment
     context_object_name = "appointments"
 
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     now_datetime = timezone.now()
+    #     user = self.request.user
+    #
+    #     appointments_with_datetime = self.model.objects.annotate(
+    #         full_datetime=ExpressionWrapper(
+    #             F("date") + F("time"),
+    #             output_field=DateTimeField()
+    #         )
+    #     )
+    #
+    #     upcoming_appointment = appointments_with_datetime.filter(
+    #         user=user.patient_profile,
+    #         full_datetime__gte=now_datetime
+    #     ).order_by("full_datetime")
+    #
+    #     past_appointment = appointments_with_datetime.filter(
+    #         user=user.patient_profile,
+    #         full_datetime__lt=now_datetime
+    #     ).order_by("-full_datetime")
+    #
+    #     context["upcoming_appointment"] = upcoming_appointment
+    #     context["past_appointment"] = past_appointment
+    #     return context
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        now_datetime = timezone.now()
+        today = timezone.now().date()
+        now_time = timezone.now().time()
+        user = self.request.user
 
-        upcoming_appointment = self.model.objects.filter(
-            date__gte=now_datetime.date(), time__gte=now_datetime.time()
-        ).order_by("date", "time")
-        past_appointment = self.model.objects.filter(
-            date__lte=now_datetime.date(), time__lte=now_datetime.time()
-        ).order_by("-date", "-time")
+        upcoming_appointment = Appointment.objects.filter(
+            Q(date__gt=today) | Q(date=today, time__gte=now_time),
+            user=user.patient_profile,
+        )
 
-        context["upcoming_appointment"] = upcoming_appointment
-        context["past_appointment"] = past_appointment
+        past_appointment = Appointment.objects.filter(
+            Q(date__lt=today) | Q(date=today, time__lt=now_time),
+            user=user.patient_profile,
+        )
+
+        context["upcoming_appointment"] = upcoming_appointment.order_by("date", "time")
+        context["past_appointment"] = past_appointment.order_by("date", "time")
         return context
 
 
@@ -67,19 +100,52 @@ class DoctorAppointmentsView(ListView):
     model = Appointment
     context_object_name = "appointments"
 
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    # now_datetime = timezone.now()
+    # user = self.request.user
+    #
+    # appointments_with_datetime = self.model.objects.annotate(
+    #     full_datetime=ExpressionWrapper(
+    #         F("date") + F("time"),
+    #         output_field=DateTimeField()
+    #     )
+    # )
+    #
+    # upcoming_appointment = appointments_with_datetime.filter(
+    #     doctor=user.doctor_profile,
+    #     full_datetime__gte=now_datetime
+    # ).order_by("full_datetime")
+    #
+    # past_appointment = appointments_with_datetime.filter(
+    #     doctor=user.doctor_profile,
+    #     full_datetime__lt=now_datetime
+    # ).order_by("-full_datetime")
+    #
+    # context["upcoming_appointment"] = upcoming_appointment
+    # context["past_appointment"] = past_appointment
+    #
+    # return context
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        now_datetime = timezone.now()
+        today = timezone.now().date()
+        now_time = timezone.now().time()
+        user = self.request.user
 
-        upcoming_appointment = self.model.objects.filter(
-            date__gte=now_datetime.date(), time__gte=now_datetime.time()
-        ).order_by("date", "time")
-        past_appointment = self.model.objects.filter(
-            date__lte=now_datetime.date(), time__lte=now_datetime.time()
-        ).order_by("-date", "-time")
+        upcoming_appointment = Appointment.objects.filter(
+            Q(date__gt=today) | Q(date=today, time__gte=now_time),
+            doctor=user.doctor_profile,
+        )
 
-        context["upcoming_appointment"] = upcoming_appointment
-        context["past_appointment"] = past_appointment
+        past_appointment = Appointment.objects.filter(
+            Q(date__lt=today) | Q(date=today, time__lt=now_time),
+            doctor=user.doctor_profile,
+        )
+
+        context["upcoming_appointment"] = upcoming_appointment.order_by("date", "time")
+        context["past_appointment"] = past_appointment.order_by("date", "time")
+
         return context
 
 
@@ -202,14 +268,36 @@ class AppointmentCreateView(LoginRequiredMixin, CreateView):
         return super().form_invalid(form)
 
 
-class AppointmentUpdateView(UpdateView):
-    model = Appointment
-    form_class = AppointmentForm
-    template_name = "appointments/appointment_form.html"
-    success_url = reverse_lazy("appointments:appointments-list")
+# class AppointmentUpdateView(LoginRequiredMixin, UpdateView):
+#     model = Appointment
+#     form_class = AppointmentForm
+#     template_name = "appointments/appointment_form.html"
+#     success_url = reverse_lazy("appointments:appointments-list")
 
 
-class AppointmentDeleteView(DeleteView):
+class AppointmentDeleteView(LoginRequiredMixin, DeleteView):
     model = Appointment
     template_name = "appointments/appointment_confirm_delete.html"
     success_url = reverse_lazy("appointments:appointments-list")
+
+
+class AppointmentNoteView(LoginRequiredMixin, DetailView):
+    model = Appointment
+    template_name = "appointments/appointment_note_detail.html"
+    context_object_name = "appointment"
+
+    def get_queryset(self):
+        user = self.request.user
+        if hasattr(user, "patient_profile"):
+            return Appointment.objects.filter(user=user.patient_profile)
+        elif hasattr(user, "doctor_profile"):
+            return Appointment.objects.filter(doctor=user.doctor_profile)
+
+
+class AppointmentNoteUpdateView(UpdateView):
+    model = Appointment
+    form_class = AppointmentNoteForm
+    template_name = "appointments/appointment_note_form.html"
+
+    def get_success_url(self):
+        return reverse_lazy("appointments:doctor-appointments")
