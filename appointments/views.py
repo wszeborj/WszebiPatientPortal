@@ -27,6 +27,11 @@ from .forms import AppointmentForm, AppointmentNoteForm
 from .models import Appointment
 from .services.date_parser import try_parsing_date
 from .services.doctor_schedule import DoctorScheduleService
+from .services.email_utils import (
+    send_appointment_created_email,
+    send_appointment_deleted_email,
+    send_note_added_email,
+)
 
 
 class MainView(TemplateView):
@@ -257,6 +262,7 @@ class AppointmentCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         form.save()
+        send_appointment_created_email(self.object)
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -280,6 +286,11 @@ class AppointmentDeleteView(LoginRequiredMixin, DeleteView):
     template_name = "appointments/appointment_confirm_delete.html"
     success_url = reverse_lazy("appointments:appointments-list")
 
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        send_appointment_deleted_email(self.object)
+        return response
+
 
 class AppointmentNoteView(LoginRequiredMixin, DetailView):
     model = Appointment
@@ -300,4 +311,5 @@ class AppointmentNoteUpdateView(UpdateView):
     template_name = "appointments/appointment_note_form.html"
 
     def get_success_url(self):
+        send_note_added_email(self.object)
         return reverse_lazy("appointments:doctor-appointments")

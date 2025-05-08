@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView
@@ -149,7 +150,7 @@ class UserProcessing:
         send_mail(
             subject=subject,
             message=message,
-            from_email="no_reply@wszebipatientportal.pl",
+            from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[recipient_mail],
             fail_silently=False,
         )
@@ -171,7 +172,7 @@ class UserProcessing:
         send_mail(
             subject=subject,
             message=message,
-            from_email="no_reply@wszebipatientportal.pl",
+            from_email=settings.DEFAULT_FROM_EMAIL,
             recipient_list=[recipient_mail],
             fail_silently=False,
         )
