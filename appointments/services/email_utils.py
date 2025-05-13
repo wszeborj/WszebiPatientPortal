@@ -1,7 +1,15 @@
+from datetime import timedelta
+
 from django.conf import settings
 from django.core.mail import send_mail
+from django.utils.timezone import now
+
+from core.celery import app
+
+from ..models import Appointment
 
 
+@app.task
 def send_appointment_created_email(appointment):
     send_mail(
         subject="Appointment booked",
@@ -11,6 +19,7 @@ def send_appointment_created_email(appointment):
     )
 
 
+@app.task
 def send_note_added_email(appointment):
     send_mail(
         subject="New note added to your appointment",
@@ -20,6 +29,7 @@ def send_note_added_email(appointment):
     )
 
 
+@app.task
 def send_appointment_deleted_email(appointment):
     send_mail(
         subject="Appointment cancelled",
@@ -29,6 +39,7 @@ def send_appointment_deleted_email(appointment):
     )
 
 
+@app.task
 def send_appointment_reminder_email(appointment):
     send_mail(
         subject="Upcoming appointment reminder",
@@ -36,3 +47,15 @@ def send_appointment_reminder_email(appointment):
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[appointment.user.user.email],
     )
+
+
+def send_upcoming_appointment_reminders():
+    """
+    Configured as periodic task, is done everyday at 1 am in the night
+    """
+    tomorrow = now().date() + timedelta(days=1)
+    appointments = Appointment.objects.filter(
+        date=tomorrow
+    )  # TODO check ile wykonuje sie connection do DB prefetch_related / select_related
+    for appointment in appointments:
+        send_appointment_reminder_email(appointment)

@@ -40,8 +40,8 @@ class MainView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        doctors_amount = Doctor.objects.count()
-        context[doctors_amount] = doctors_amount
+        doctors = Doctor.objects.all()
+        context["doctors"] = doctors
 
         departments = Department.objects.all()
         context["departments"] = departments
@@ -88,15 +88,17 @@ class UserAppointmentsView(ListView):
         upcoming_appointment = Appointment.objects.filter(
             Q(date__gt=today) | Q(date=today, time__gte=now_time),
             user=user.patient_profile,
-        )
+        ).order_by("date", "time")
 
         past_appointment = Appointment.objects.filter(
             Q(date__lt=today) | Q(date=today, time__lt=now_time),
             user=user.patient_profile,
-        )
+        ).order_by("date", "time")
 
-        context["upcoming_appointment"] = upcoming_appointment.order_by("date", "time")
-        context["past_appointment"] = past_appointment.order_by("date", "time")
+        context["upcoming_appointment"], context["past_appointment"] = (
+            upcoming_appointment,
+            past_appointment,
+        )
         return context
 
 
@@ -154,7 +156,7 @@ class DoctorAppointmentsView(ListView):
         return context
 
 
-class DoctorFilter(django_filters.FilterSet):
+class DoctorFilter(django_filters.FilterSet):  # TODO plik filters.py
     doctor_id = django_filters.NumberFilter(
         field_name="id", label="", widget=forms.HiddenInput()
     )
@@ -261,13 +263,10 @@ class AppointmentCreateView(LoginRequiredMixin, CreateView):
         return kwargs
 
     def form_valid(self, form):
-        form.save()
         send_appointment_created_email(self.object)
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        # print(self.request.POST)
-        # print(form.errors)
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(self.request, f"Issue in field {field}: {error}")
@@ -287,9 +286,8 @@ class AppointmentDeleteView(LoginRequiredMixin, DeleteView):
     success_url = reverse_lazy("appointments:appointments-list")
 
     def form_valid(self, form):
-        response = super().form_valid(form)
         send_appointment_deleted_email(self.object)
-        return response
+        return super().form_valid(form)
 
 
 class AppointmentNoteView(LoginRequiredMixin, DetailView):
@@ -298,11 +296,14 @@ class AppointmentNoteView(LoginRequiredMixin, DetailView):
     context_object_name = "appointment"
 
     def get_queryset(self):
+        queryset = super().get_queryset()
         user = self.request.user
         if hasattr(user, "patient_profile"):
-            return Appointment.objects.filter(user=user.patient_profile)
+            return queryset.objects.filter(user=user.patient_profile)
         elif hasattr(user, "doctor_profile"):
-            return Appointment.objects.filter(doctor=user.doctor_profile)
+            return queryset.objects.filter(doctor=user.doctor_profile)
+
+        return queryset.objects.none()
 
 
 class AppointmentNoteUpdateView(UpdateView):
