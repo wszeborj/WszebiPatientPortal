@@ -25,6 +25,7 @@ class User(AbstractUser):
         max_length=255,
         blank=True,
     )
+    last_login = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"

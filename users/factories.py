@@ -8,6 +8,35 @@ from .models import Department, Doctor, Patient, Specialization, User
 fake = Faker("pl_PL")
 
 
+def add_permissions_to_group(group, role):
+    from django.contrib.auth.models import Permission
+
+    if role == User.Role.DOCTOR:
+        doctor_permissions = [
+            "add_scheduleday",
+            "change_scheduleday",
+            "delete_scheduleday",
+            "view_scheduleday",
+            "add_specialization",
+            "view_scheduleday",
+            "view_appointment",
+            "change_appointment",
+            "delete_appointment",
+        ]
+
+        for perm_code in doctor_permissions:
+            try:
+                # app_label, codename = perm_code.split('.')
+                codename = perm_code
+                perm = Permission.objects.get(
+                    # content_type__app_label=app_label
+                    codename=codename
+                )
+                group.permissions.add(perm)
+            except Permission.DoesNotExist:
+                pass
+
+
 class UserFactory(DjangoModelFactory):
     class Meta:
         model = User
@@ -49,8 +78,20 @@ class UserFactory(DjangoModelFactory):
 
         group_name = role_to_group.get(self.role)
         if group_name:
-            group, _ = Group.objects.get_or_create(name=group_name)
+            group, created = Group.objects.get_or_create(name=group_name)
             self.groups.add(group)
+
+            if created:
+                add_permissions_to_group(group, self.role)
+
+    @factory.post_generation
+    def set_password(self, create, extracted, **kwargs):
+        if not create:
+            return
+
+        password = extracted if extracted else "password123"
+        self.set_password(password)
+        self.save()
 
 
 class PatientFactory(DjangoModelFactory):
@@ -168,7 +209,7 @@ class DoctorFactory(DjangoModelFactory):
     class Meta:
         model = Doctor
 
-    user = factory.SubFactory(UserFactory, role=User.Role.DOCTOR)
+    user = factory.SubFactory(UserFactory, role=User.Role.DOCTOR, is_active=True)
     title = factory.Iterator(["Dr", "Prof.", "Dr hab.", "lek."])
     description = factory.Faker("paragraph")
     confirmed = True

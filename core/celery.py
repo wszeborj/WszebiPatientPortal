@@ -22,9 +22,13 @@ app.config_from_object("django.conf:settings", namespace="CELERY")
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 app.conf.beat_schedule = {
-    "add-every-30-seconds": {
+    "send_appointment_reminders": {
         "task": "appointments.services.email_utils.send_upcoming_appointment_reminders",
         "schedule": crontab(hour="1", minute="0"),
+    },
+    "delete_old_schedules": {
+        "task": "schedules.services.schedule_clearing.delete_older_schedules",
+        "schedule": crontab(hour="2", minute="00", day_of_week="1"),
     },
 }
 app.conf.timezone = "CET"

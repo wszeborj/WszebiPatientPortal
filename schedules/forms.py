@@ -100,6 +100,9 @@ class ScheduleDayForm(forms.ModelForm):
         start_datetime = datetime.combine(work_date, start_time)
         end_datetime = datetime.combine(work_date, end_time)
 
+        if start_datetime > end_datetime:
+            raise forms.ValidationError("End time is before start time.")
+
         duration = end_datetime - start_datetime
         if interval > duration:
             raise forms.ValidationError(

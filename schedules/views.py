@@ -16,6 +16,7 @@ class ScheduleCalendarView(PermissionRequiredMixin, TemplateView):
         "schedules.delete_scheduleday",
         "schedules.view_scheduleday",
     )
+
     # permission_denied_message = "You have no access to this calendar"
 
     def get_context_data(self, **kwargs):
@@ -51,18 +52,16 @@ class ScheduleDayCreateView(CreateView):
         schedule.doctor = doctor
         schedule.save()
         if action == "save_exit":
-            messages.success(self.request, "Grafik został zapisany!.")
+            messages.success(self.request, "Schedule saved!.")
             return redirect("schedules:schedule-calendar")
         elif action == "save":
-            messages.success(
-                self.request, "Grafik został zapisany! Możesz dodać kolejny dzień."
-            )
+            messages.success(self.request, "Schedule saved! You can add another day.")
             return redirect("schedules:schedule-day-create")
 
     def form_invalid(self, form):
         for field, errors in form.errors.items():
             for error in errors:
-                messages.error(self.request, f"Błąd w polu {field}: {error}")
+                messages.error(self.request, f"Error in field {field}: {error}")
         return super().form_invalid(form)
 
 

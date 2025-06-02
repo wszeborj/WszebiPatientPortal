@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import LoginView
 from django.contrib.sites.shortcuts import get_current_site
@@ -31,12 +32,16 @@ class RegisterUserFormView(FormView):
 
         messages.success(
             self.request,
-            f"Drogi {user.username}, aktywuj swoje konto klikając w link wysłany na Twojego maila",
+            f"Dear {user.username}, activate your account by clicking in activation link in sent mail",
         )
         return super().form_valid(form)
 
+    def form_invalid(self, form):
+        print("Form errors:", form.errors)
+        return super().form_invalid(form)
 
-class CompleteDoctorDataView(FormView):
+
+class CompleteDoctorDataView(LoginRequiredMixin, FormView):
     template_name = "users/register.html"
     form_class = DoctorRegistrationForm
     success_url = reverse_lazy("users:login")
@@ -46,16 +51,25 @@ class CompleteDoctorDataView(FormView):
         doctor.user = self.request.user
         doctor.save()
         form.save_m2m()
-        messages.success(self.request, "Uzupełniłeś dane jako lekarz!")
+        messages.success(self.request, "Fulfilled data as a doctor!")
 
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        print("Form errors:", form.errors)
+        return super().form_invalid(form)
 
 
 class DoctorListView(ListView):
     template_name = "users/doctor_list.html"
     model = Doctor
     context_object_name = "doctors"
-    queryset = Doctor.objects.select_related("user").order_by("user__last_name")
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(confirmed=True)
+        queryset = queryset.select_related("user").order_by("user__last_name")
+        return queryset
 
 
 class DoctorDetailsView(DetailView):
@@ -107,15 +121,16 @@ class ActivateView(View):
             if user.role == User.Role.DOCTOR:
                 messages.success(
                     request,
-                    "Twoje konto zostało aktywowane, "
-                    "ale musisz jeszcze usupełnić i potwierdzić dane lekarza",
+                    "Your account has been activated,"
+                    " but you still need to complete and confirm your doctor's details.",
                 )
+                print("redirect")
                 return redirect("users:complete-doctor-data")
 
-            messages.success(request, "Twoje konto zostało aktywowane!")
+            messages.success(request, "Your account has been activated!")
             return redirect("users:login")
         else:
-            messages.warning(request, "Link aktywacyjny jest nieprawidłowy!")
+            messages.warning(request, "Activation link is invalid!")
             return redirect("users:register")
 
 
