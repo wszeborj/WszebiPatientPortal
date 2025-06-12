@@ -13,6 +13,21 @@
           <div>
             <strong>{{ appointment.date }} {{ appointment.time }}</strong> – Doctor: {{ appointment.doctor }}
           </div>
+          <div class="d-flex align-items-center gap-2">
+              {% if not appointment.is_confirmed %}
+                <a href="{% url 'appointments:appointment-confirm' appointment.pk %}" class="btn btn-success btn-sm">
+                  Confirm appointment
+                </a>
+              {% else %}
+                <span class="text-success fw-bold">
+                  ✓ Confirmed
+                </span>
+              {% endif %}
+
+              <a href="{% url 'appointments:appointment-delete' appointment.pk %}" class="btn btn-danger btn-sm">
+                Cancel appointment
+              </a>
+            </div>
         </li>
       {% endfor %}
     </ul>
@@ -28,13 +43,13 @@
           <div>
             <strong>{{ appointment.date }} {{ appointment.time }}</strong> – Doctor: {{ appointment.doctor }}
           </div>
-          <div class="d-flex align-items-center">
-            {% if appointment.notes %}
-              <a href="{% url 'appointments:appointment-note' appointment.pk %}" class="btn btn-info btn-sm">
-                View note
-              </a>
-            {% endif %}
-          </div>
+            <div class="d-flex align-items-center gap-2">
+              {% if appointment.notes %}
+                <a href="{% url 'appointments:appointment-note' appointment.pk %}" class="btn btn-info btn-sm">
+                  View note
+                </a>
+              {% endif %}
+            </div>
         </li>
       {% endfor %}
     </ul>

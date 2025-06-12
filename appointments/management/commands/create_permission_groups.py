@@ -33,6 +33,9 @@ def create_permission_groups():
             "view_scheduleday",
             "add_specialization",
             "view_scheduleday",
+            "view_appointment",
+            "change_appointment",
+            "delete_appointment",
         ],
         "staff_group": [
             "delete_specialization",

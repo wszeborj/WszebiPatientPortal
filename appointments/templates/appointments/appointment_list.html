@@ -46,7 +46,13 @@
                         <li class="py-2 {% if slot.is_taken or slot.is_past %}bg-light text-muted{% else %}bg-success text-white{% endif %} border mb-1">
                             {{ slot.time }}
                             {% if not slot.is_taken and not slot.is_past %}
-                            <a href="{% url 'appointments:appointment-create' %}?doctor={{ doctor.id }}&date={{ day }}&time={{ slot.time }}" class="btn btn-sm btn-light">Book</a>
+                            <form method="POST" action="{% url 'appointments:appointment-create' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="doctor" value="{{ doctor.id }}">
+                                <input type="hidden" name="date" value="{{ day }}">
+                                <input type="hidden" name="time" value="{{ slot.time }}">
+                                <button type="submit" value="Submit">Book</button>
+                            </form>
                             {% elif slot.is_taken %}
                             <span class="badge bg-danger">Booked</span>
                             {% else %}

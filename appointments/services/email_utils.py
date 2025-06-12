@@ -11,6 +11,7 @@ from ..models import Appointment
 
 @app.task
 def send_appointment_created_email(appointment):
+    print("send_appointment_created_email")
     send_mail(
         subject="Appointment booked",
         message=f"You have successfully booked an appointment on {appointment.date} at {appointment.time} for {appointment.doctor}.",

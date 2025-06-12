@@ -17,7 +17,7 @@ class Appointment(models.Model):
     )
     created_at = models.DateTimeField(auto_now_add=True)
     modified_at = models.DateTimeField(auto_now=True)
-    is_canceled = models.BooleanField(default=False)
+    is_confirmed = models.BooleanField(default=False)
 
     class Meta:
         ordering = ["doctor", "date", "time"]

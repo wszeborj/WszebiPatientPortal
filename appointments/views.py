@@ -1,14 +1,10 @@
 from datetime import date, datetime, timedelta
 from typing import Tuple
 
-import django_filters
-from django import forms
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin
-
-# from django.db.models import DateTimeField, ExpressionWrapper, F
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.db.models import Q
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import (
@@ -18,17 +14,17 @@ from django.views.generic import (
     ListView,
     TemplateView,
     UpdateView,
+    View,
 )
 from django_filters.views import FilterView
 
-from users.models import Department, Doctor, Specialization
+from users.models import Department, Doctor
 
+from .filters import DoctorFilter
 from .forms import AppointmentForm, AppointmentNoteForm
 from .models import Appointment
-from .services.date_parser import try_parsing_date
 from .services.doctor_schedule import DoctorScheduleService
-from .services.email_utils import (
-    send_appointment_created_email,
+from .services.email_utils import (  # send_appointment_created_email,
     send_appointment_deleted_email,
     send_note_added_email,
 )
@@ -49,36 +45,12 @@ class MainView(TemplateView):
         return context
 
 
-class UserAppointmentsView(ListView):
+class UserAppointmentsView(LoginRequiredMixin, ListView):
     template_name = "appointments/user_appointments.html"
     model = Appointment
     context_object_name = "appointments"
+    permission_required = "appointments.view_appointment"
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     now_datetime = timezone.now()
-    #     user = self.request.user
-    #
-    #     appointments_with_datetime = self.model.objects.annotate(
-    #         full_datetime=ExpressionWrapper(
-    #             F("date") + F("time"),
-    #             output_field=DateTimeField()
-    #         )
-    #     )
-    #
-    #     upcoming_appointment = appointments_with_datetime.filter(
-    #         user=user.patient_profile,
-    #         full_datetime__gte=now_datetime
-    #     ).order_by("full_datetime")
-    #
-    #     past_appointment = appointments_with_datetime.filter(
-    #         user=user.patient_profile,
-    #         full_datetime__lt=now_datetime
-    #     ).order_by("-full_datetime")
-    #
-    #     context["upcoming_appointment"] = upcoming_appointment
-    #     context["past_appointment"] = past_appointment
-    #     return context
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         today = timezone.now().date()
@@ -102,37 +74,11 @@ class UserAppointmentsView(ListView):
         return context
 
 
-class DoctorAppointmentsView(ListView):
+class DoctorAppointmentsView(PermissionRequiredMixin, ListView):
     template_name = "appointments/doctor_appointments.html"
     model = Appointment
     context_object_name = "appointments"
-
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    # now_datetime = timezone.now()
-    # user = self.request.user
-    #
-    # appointments_with_datetime = self.model.objects.annotate(
-    #     full_datetime=ExpressionWrapper(
-    #         F("date") + F("time"),
-    #         output_field=DateTimeField()
-    #     )
-    # )
-    #
-    # upcoming_appointment = appointments_with_datetime.filter(
-    #     doctor=user.doctor_profile,
-    #     full_datetime__gte=now_datetime
-    # ).order_by("full_datetime")
-    #
-    # past_appointment = appointments_with_datetime.filter(
-    #     doctor=user.doctor_profile,
-    #     full_datetime__lt=now_datetime
-    # ).order_by("-full_datetime")
-    #
-    # context["upcoming_appointment"] = upcoming_appointment
-    # context["past_appointment"] = past_appointment
-    #
-    # return context
+    permission_required = "appointments.view_appointment"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -154,43 +100,6 @@ class DoctorAppointmentsView(ListView):
         context["past_appointment"] = past_appointment.order_by("date", "time")
 
         return context
-
-
-class DoctorFilter(django_filters.FilterSet):  # TODO plik filters.py
-    doctor_id = django_filters.NumberFilter(
-        field_name="id", label="", widget=forms.HiddenInput()
-    )
-    specialization = django_filters.ModelMultipleChoiceFilter(
-        queryset=Specialization.objects.all().order_by("name"), label="Specialization"
-    )
-
-    doctor_name = django_filters.CharFilter(
-        method="filter_doctor_name", label="First name and second name"
-    )
-
-    doctor_title = django_filters.ChoiceFilter(
-        field_name="title",
-        choices=[
-            (title, title)
-            for title in Doctor.objects.values_list("title", flat=True).distinct()
-        ],
-        label="Doctor title",
-    )
-
-    def filter_doctor_name(self, queryset, name, value):
-        parts = value.split()
-
-        query = Q()
-        for part in parts:
-            query |= Q(user__first_name__icontains=part) | Q(
-                user__last_name__icontains=part
-            )
-
-        return queryset.filter(query)
-
-    class Meta:
-        model = Doctor
-        fields = ["doctor_title", "doctor_name", "specialization"]
 
 
 class AppointmentListView(ListView, FilterView):
@@ -240,31 +149,25 @@ class AppointmentListView(ListView, FilterView):
         return context
 
 
-class AppointmentCreateView(LoginRequiredMixin, CreateView):
+class AppointmentCreateView(PermissionRequiredMixin, CreateView):
     model = Appointment
     form_class = AppointmentForm
     template_name = "appointments/appointment_form.html"
-    success_url = reverse_lazy("appointments:appointments-list")
-
-    def get_form_kwargs(self):
-        kwargs = super().get_form_kwargs()
-        doctor_id = self.request.GET.get("doctor")
-        date_str = self.request.GET.get("date")
-        time_str = self.request.GET.get("time")
-
-        doctor = get_object_or_404(Doctor, id=doctor_id)
-        date = try_parsing_date(date_str)
-        time = datetime.strptime(time_str, "%H:%M").time()
-
-        kwargs["doctor"] = doctor
-        kwargs["date"] = date
-        kwargs["time"] = time
-        kwargs["user"] = self.request.user
-        return kwargs
+    permission_required = "appointments.add_appointment"
 
     def form_valid(self, form):
-        send_appointment_created_email(self.object)
+        appointment = form.save(commit=False)
+        appointment.user = self.request.user.patient_profile
+        appointment.save()
+        print("form is valid")
+        # self.object = appointment
+        # send_appointment_created_email(appointment)
         return super().form_valid(form)
+
+    def get_success_url(self):
+        return reverse_lazy(
+            "appointments:appointment-confirm", kwargs={"pk": self.object.pk}
+        )
 
     def form_invalid(self, form):
         for field, errors in form.errors.items():
@@ -273,27 +176,50 @@ class AppointmentCreateView(LoginRequiredMixin, CreateView):
         return super().form_invalid(form)
 
 
-# class AppointmentUpdateView(LoginRequiredMixin, UpdateView):
-#     model = Appointment
-#     form_class = AppointmentForm
-#     template_name = "appointments/appointment_form.html"
-#     success_url = reverse_lazy("appointments:appointments-list")
+class AppointmentConfirmationView(PermissionRequiredMixin, View):
+    permission_required = "appointments.add_appointment"
+    template_name = "appointments/appointment_confirm.html"
+
+    def get(self, request, pk, *args, **kwargs):
+        appointment = get_object_or_404(
+            Appointment, pk=pk, user=request.user.patient_profile
+        )
+        return render(request, self.template_name, {"appointment": appointment})
+
+    def post(self, request, pk, *args, **kwargs):
+        appointment = get_object_or_404(
+            Appointment, pk=pk, user=request.user.patient_profile
+        )
+        appointment.is_confirmed = True
+        appointment.save()
+        messages.success(request, "Appointment confirmed.")
+        return redirect("appointments:appointments-list")
 
 
-class AppointmentDeleteView(LoginRequiredMixin, DeleteView):
+class AppointmentDeleteView(PermissionRequiredMixin, DeleteView):
     model = Appointment
     template_name = "appointments/appointment_confirm_delete.html"
-    success_url = reverse_lazy("appointments:appointments-list")
+    # success_url = reverse_lazy("appointments:appointments-list")
+    permission_required = "appointments.delete_appointment"
 
     def form_valid(self, form):
         send_appointment_deleted_email(self.object)
         return super().form_valid(form)
 
+    def get_success_url(self):
+        user = self.request.user
+        if hasattr(user, "doctor_profile"):
+            return reverse_lazy("appointments:doctor-appointments")
+        elif hasattr(user, "patient_profile"):
+            return reverse_lazy("appointments:user-appointments")
+        return reverse_lazy("appointments:appointments-list")
 
-class AppointmentNoteView(LoginRequiredMixin, DetailView):
+
+class AppointmentNoteView(PermissionRequiredMixin, DetailView):
     model = Appointment
     template_name = "appointments/appointment_note_detail.html"
     context_object_name = "appointment"
+    permission_required = "appointments.view_appointment"
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -306,10 +232,11 @@ class AppointmentNoteView(LoginRequiredMixin, DetailView):
         return queryset.objects.none()
 
 
-class AppointmentNoteUpdateView(UpdateView):
+class AppointmentNoteUpdateView(PermissionRequiredMixin, UpdateView):
     model = Appointment
     form_class = AppointmentNoteForm
     template_name = "appointments/appointment_note_form.html"
+    permission_required = "appointments.change_appointment"
 
     def get_success_url(self):
         send_note_added_email(self.object)

@@ -1,9 +1,9 @@
 {% extends "appointments/base.html" %}
-{% block title %}Create Appointment{% endblock %}
+{% block title %}Confirm Appointment{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h1 class="text-center">Create Appointment</h1>
+    <h1 class="text-center">Confirm Appointment</h1>
 
     <div class="card">
         <div class="card-body">
@@ -16,9 +16,10 @@
 
     <form method="post">
         {% csrf_token %}
-        <button type="submit" class="btn btn-success mt-3">Create Appointment</button>
+        <button type="submit" class="btn btn-success mt-3">Confirm Appointment</button>
     </form>
 
+    <a href="{% url 'appointments:appointment-delete' appointment.id %}" class="btn btn-secondary mt-3">Remove appointment</a>
     <a href="{% url 'appointments:appointments-list' %}" class="btn btn-secondary mt-3">Cancel</a>
 </div>
 {% endblock %}

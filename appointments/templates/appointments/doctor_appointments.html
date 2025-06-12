@@ -13,18 +13,28 @@
           <div>
             <strong>{{ appointment.date }} {{ appointment.time }}</strong> – Patient: {{ appointment.user }}
           </div>
-          <div class="d-flex align-items-center">
-          <a href="{% url 'appointments:appointment-note-update' appointment.pk %}" class="btn btn-sm btn-secondary mr-2">
-            {% if appointment.notes %}
-              Update note
+          <div class="d-flex align-items-center gap-2">
+            <a href="{% url 'appointments:appointment-note-update' appointment.pk %}" class="btn btn-sm btn-secondary mr-2">
+              {% if appointment.notes %}
+                Update note
+              {% else %}
+                Create note
+              {% endif %}
+            </a>
+            {% if not appointment.is_confirmed %}
+              <span class="text-warning fw-bold">
+                x Not Confirmed
+              </span>
             {% else %}
-              Create note
+              <span class="text-success fw-bold">
+                ✓ Confirmed
+              </span>
             {% endif %}
-          </a>
-          <form method="post" action="{% url 'appointments:appointment-delete' appointment.pk %}" class="m-0">
-            {% csrf_token %}
-            <button type="submit" class="btn btn-danger btn-sm">Delete appointment</button>
-          </form>
+
+            <a href="{% url 'appointments:appointment-delete' appointment.pk %}" class="btn btn-danger btn-sm">
+              Cancel appointment
+            </a>
+          </div>
         </li>
       {% endfor %}
     </ul>
