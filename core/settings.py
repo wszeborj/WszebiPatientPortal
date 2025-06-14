@@ -38,7 +38,11 @@ INSTALLED_APPS = [
     "django_filters",
 ]
 
-INSTALLED_EXTENSIONS = ["appointments", "schedules", "users"]
+INSTALLED_EXTENSIONS = [
+    "appointments",
+    "schedules",
+    "users",
+]
 
 INSTALLED_APPS += INSTALLED_EXTENSIONS
 
@@ -50,7 +54,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "users.middleware.CompleteDoctorProfileMiddleware",
+    # "users.middleware.CompleteDoctorProfileMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"

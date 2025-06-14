@@ -24,7 +24,9 @@ from .filters import DoctorFilter
 from .forms import AppointmentForm, AppointmentNoteForm
 from .models import Appointment
 from .services.doctor_schedule import DoctorScheduleService
-from .services.email_utils import (  # send_appointment_created_email,
+from .services.email_utils import (
+    send_appointment_confirmed_email,
+    send_appointment_created_email,
     send_appointment_deleted_email,
     send_note_added_email,
 )
@@ -161,7 +163,7 @@ class AppointmentCreateView(PermissionRequiredMixin, CreateView):
         appointment.save()
         print("form is valid")
         # self.object = appointment
-        # send_appointment_created_email(appointment)
+        send_appointment_created_email(appointment)
         return super().form_valid(form)
 
     def get_success_url(self):
@@ -180,19 +182,19 @@ class AppointmentConfirmationView(PermissionRequiredMixin, View):
     permission_required = "appointments.add_appointment"
     template_name = "appointments/appointment_confirm.html"
 
+    def get_appointment(self, pk, request):
+        return get_object_or_404(Appointment, pk=pk, user=request.user.patient_profile)
+
     def get(self, request, pk, *args, **kwargs):
-        appointment = get_object_or_404(
-            Appointment, pk=pk, user=request.user.patient_profile
-        )
+        appointment = self.get_appointment(pk, request)
         return render(request, self.template_name, {"appointment": appointment})
 
     def post(self, request, pk, *args, **kwargs):
-        appointment = get_object_or_404(
-            Appointment, pk=pk, user=request.user.patient_profile
-        )
+        appointment = self.get_appointment(pk, request)
         appointment.is_confirmed = True
         appointment.save()
         messages.success(request, "Appointment confirmed.")
+        send_appointment_confirmed_email(appointment)
         return redirect("appointments:appointments-list")
 
 
@@ -225,9 +227,9 @@ class AppointmentNoteView(PermissionRequiredMixin, DetailView):
         queryset = super().get_queryset()
         user = self.request.user
         if hasattr(user, "patient_profile"):
-            return queryset.objects.filter(user=user.patient_profile)
+            return queryset.filter(user=user.patient_profile)
         elif hasattr(user, "doctor_profile"):
-            return queryset.objects.filter(doctor=user.doctor_profile)
+            return queryset.filter(doctor=user.doctor_profile)
 
         return queryset.objects.none()
 

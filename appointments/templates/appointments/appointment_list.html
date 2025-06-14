@@ -51,7 +51,7 @@
                                 <input type="hidden" name="doctor" value="{{ doctor.id }}">
                                 <input type="hidden" name="date" value="{{ day }}">
                                 <input type="hidden" name="time" value="{{ slot.time }}">
-                                <button type="submit" value="Submit">Book</button>
+                                <button type="submit" value="Submit" onclick="return confirm('Are you sure you want to book?')">Book</button>
                             </form>
                             {% elif slot.is_taken %}
                             <span class="badge bg-danger">Booked</span>

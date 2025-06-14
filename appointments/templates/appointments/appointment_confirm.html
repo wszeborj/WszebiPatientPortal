@@ -19,7 +19,8 @@
         <button type="submit" class="btn btn-success mt-3">Confirm Appointment</button>
     </form>
 
-    <a href="{% url 'appointments:appointment-delete' appointment.id %}" class="btn btn-secondary mt-3">Remove appointment</a>
+    <a href="{% url 'appointments:appointment-delete' appointment.id %}"
+       class="btn btn-secondary mt-3">Remove appointment</a>
     <a href="{% url 'appointments:appointments-list' %}" class="btn btn-secondary mt-3">Cancel</a>
 </div>
 {% endblock %}

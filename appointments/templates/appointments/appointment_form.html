@@ -4,17 +4,17 @@
 {% block content %}
 <div class="container mt-4">
     <h1 class="text-center">Create Appointment</h1>
-
-    <div class="card">
-        <div class="card-body">
-            <h4>Appointment Details</h4>
-            <p><strong>Doctor:</strong> {{ appointment.doctor }}</p>
-            <p><strong>Date:</strong> {{ appointment.date }}</p>
-            <p><strong>Time:</strong> {{ appointment.time|time:'H:i' }}</p>
-        </div>
-    </div>
-
     <form method="post">
+        <div class="card">
+            <div class="card-body">
+                <h4>Appointment Details</h4>
+                <p><strong>Doctor:</strong> {{ appointment.doctor }}</p>
+                <p><strong>Date:</strong> {{ appointment.date }}</p>
+                <p><strong>Time:</strong> {{ appointment.time|time:'H:i' }}</p>
+            </div>
+        </div>
+
+
         {% csrf_token %}
         <button type="submit" class="btn btn-success mt-3">Create Appointment</button>
     </form>

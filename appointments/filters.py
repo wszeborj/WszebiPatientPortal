@@ -5,6 +5,13 @@ from django.db.models import Q
 from users.models import Doctor, Specialization
 
 
+def get_doctor_title_choices():
+    choices = []
+    for title in Doctor.objects.values_list("title", flat=True).distinct():
+        choices.append((title, title))
+    return choices
+
+
 class DoctorFilter(django_filters.FilterSet):
     doctor_id = django_filters.NumberFilter(
         field_name="id", label="", widget=forms.HiddenInput()
@@ -19,12 +26,10 @@ class DoctorFilter(django_filters.FilterSet):
 
     doctor_title = django_filters.ChoiceFilter(
         field_name="title",
-        choices=[
-            (title, title)
-            for title in Doctor.objects.values_list("title", flat=True).distinct()
-        ],
+        choices=get_doctor_title_choices,
         label="Doctor title",
     )
+    # doctor_title = django_filters.ChoiceFilter(choices=get_doctor_title_choices)
 
     def filter_doctor_name(self, queryset, name, value):
         parts = value.split()

@@ -1,7 +1,7 @@
 FROM python:3.12.8-slim-bullseye
 
 ENV PYTHONUNBUFFERED=1
-ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONDONTWRITEBYTECODE=1
 ENV POETRY_VIRTUALENVS_CREATE=0
 
 RUN pip install poetry==1.8.4
@@ -31,7 +31,7 @@ COPY ./.docker/compose/celery/flower/start /start-flower
 RUN sed -i 's/\r$//g' /start-flower
 RUN chmod +x /start-flower
 
-#COPY . .
+COPY . .
 
 #ENTRYPOINT ["/entrypoint"]
 

@@ -25,4 +25,4 @@ class AppointmentFactory(DjangoModelFactory):
     notes = factory.Faker("paragraph", nb_sentences=2)
     created_at = factory.LazyFunction(timezone.now)
     modified_at = factory.LazyFunction(timezone.now)
-    is_canceled = False
+    is_confirmed = factory.Faker("pybool")

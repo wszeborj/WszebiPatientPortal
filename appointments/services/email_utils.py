@@ -11,10 +11,20 @@ from ..models import Appointment
 
 @app.task
 def send_appointment_created_email(appointment):
-    print("send_appointment_created_email")
     send_mail(
         subject="Appointment booked",
-        message=f"You have successfully booked an appointment on {appointment.date} at {appointment.time} for {appointment.doctor}.",
+        message=f"You have successfully booked an appointment on {appointment.date} at {appointment.time} for {appointment.doctor}."
+        f"You need to confirm it",
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[appointment.user.user.email],
+    )
+
+
+@app.task
+def send_appointment_confirmed_email(appointment):
+    send_mail(
+        subject="Appointment confirmed",
+        message=f"You have successfully confirmed an appointment on {appointment.date} at {appointment.time} for {appointment.doctor}.",
         from_email=settings.DEFAULT_FROM_EMAIL,
         recipient_list=[appointment.user.user.email],
     )
