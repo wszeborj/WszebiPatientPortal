@@ -12,7 +12,7 @@ def add_permissions_to_group(group, role):
     from django.contrib.auth.models import Permission
 
     if role == User.Role.DOCTOR:
-        doctor_permissions = [
+        permissions = [
             "add_scheduleday",
             "change_scheduleday",
             "delete_scheduleday",
@@ -23,18 +23,48 @@ def add_permissions_to_group(group, role):
             "change_appointment",
             "delete_appointment",
         ]
+    elif role == User.Role.PATIENT:
+        permissions = [
+            "add_appointment",
+            "view_appointment",
+            "delete_appointment",
+        ]
+    elif role == User.Role.ADMIN:
+        permissions = [
+            "add_user",
+            "change_user",
+            "delete_user",
+            "view_user",
+            "add_doctor",
+            "change_doctor",
+            "delete_doctor",
+            "view_doctor",
+            "add_patient",
+            "change_patient",
+            "delete_patient",
+            "view_patient",
+            "add_scheduleday",
+            "change_scheduleday",
+            "delete_scheduleday",
+            "view_scheduleday",
+            "add_specialization",
+            "change_specialization",
+            "delete_specialization",
+            "view_specialization",
+            "add_appointment",
+            "change_appointment",
+            "delete_appointment",
+            "view_appointment",
+        ]
+    else:
+        permissions = []
 
-        for perm_code in doctor_permissions:
-            try:
-                # app_label, codename = perm_code.split('.')
-                codename = perm_code
-                perm = Permission.objects.get(
-                    # content_type__app_label=app_label
-                    codename=codename
-                )
-                group.permissions.add(perm)
-            except Permission.DoesNotExist:
-                pass
+    for codename in permissions:
+        try:
+            perm = Permission.objects.get(codename=codename)
+            group.permissions.add(perm)
+        except Permission.DoesNotExist:
+            pass
 
 
 class UserFactory(DjangoModelFactory):

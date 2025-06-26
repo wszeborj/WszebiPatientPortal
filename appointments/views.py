@@ -161,10 +161,9 @@ class AppointmentCreateView(PermissionRequiredMixin, CreateView):
         appointment = form.save(commit=False)
         appointment.user = self.request.user.patient_profile
         appointment.save()
-        print("form is valid")
-        # self.object = appointment
+        self.object = appointment
         send_appointment_created_email(appointment)
-        return super().form_valid(form)
+        return redirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse_lazy(
@@ -172,6 +171,7 @@ class AppointmentCreateView(PermissionRequiredMixin, CreateView):
         )
 
     def form_invalid(self, form):
+        print("FORM ERRORS:", form.errors)
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(self.request, f"Issue in field {field}: {error}")

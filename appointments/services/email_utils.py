@@ -50,7 +50,6 @@ def send_appointment_deleted_email(appointment):
     )
 
 
-@app.task
 def send_appointment_reminder_email(appointment):
     send_mail(
         subject="Upcoming appointment reminder",
@@ -60,13 +59,22 @@ def send_appointment_reminder_email(appointment):
     )
 
 
+@app.task
 def send_upcoming_appointment_reminders():
     """
     Configured as periodic task, is done everyday at 1 am in the night
     """
     tomorrow = now().date() + timedelta(days=1)
     appointments = Appointment.objects.filter(
-        date=tomorrow
-    )  # TODO check ile wykonuje sie connection do DB prefetch_related / select_related
+        date=tomorrow, is_confirmed=True
+    ).select_related("user__user", "doctor__user")
+    print(f"Found {appointments.count()} appointments for {tomorrow}")
+
     for appointment in appointments:
-        send_appointment_reminder_email(appointment)
+        try:
+            send_appointment_reminder_email(appointment)
+            print(f"Sent reminder for appointment id ={appointment.id}")
+        except Exception as e:
+            print(
+                f"Error during sending of reminder for appointment id ={appointment.id}: {e}"
+            )
