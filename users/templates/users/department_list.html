@@ -13,7 +13,7 @@
         {% for department, specializations in departments_with_specializations.items %}
         <h3>{{ department.name }}</h3>
         <ul>
-            {% for specialization in specializations %}
+            {% for specialization in specializations|dictsort:"name" %}
             <li class="list-group-item">
                 <a href="{% url 'users:specialization-details' specialization.id %}">
                     {{ specialization.name }}

@@ -37,7 +37,10 @@ class RegisterUserFormView(FormView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        print("Form errors:", form.errors)
+        print("FORM ERRORS:", form.errors)
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(self.request, f"Issue in field {field}: {error}")
         return super().form_invalid(form)
 
 
@@ -84,15 +87,18 @@ class DepartmentListView(ListView):
     context_object_name = "departments"
     ordering = "name"
 
+    def get_queryset(self):
+        return Department.objects.prefetch_related("specializations").all()
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
         departments_with_specializations = {}
 
-        for department in Department.objects.all():
+        for department in self.get_queryset():
             departments_with_specializations[
                 department
-            ] = department.specializations.all().order_by("name")
+            ] = department.specializations.all()
 
         context["departments_with_specializations"] = departments_with_specializations
         return context

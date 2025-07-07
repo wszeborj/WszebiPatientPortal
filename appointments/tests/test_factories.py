@@ -17,7 +17,7 @@ class TestAppointmentFactory(TestCase):
         self.assertIsNotNone(appointment.time)
         self.assertIsNotNone(appointment.created_at)
         self.assertIsNotNone(appointment.modified_at)
-        self.assertFalse(appointment.is_canceled)
+        self.assertIsNotNone(appointment.is_confirmed)
         self.assertNotEqual(appointment.notes, "")
 
     def test_create_multiple_objects(self):

@@ -20,11 +20,9 @@ class AppointmentForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        print("cleaned_data: ", cleaned_data)
         self._validate_no_overlap(cleaned_data)
 
     def _validate_no_overlap(self, cleaned_data):
-        print(cleaned_data)
         work_date = cleaned_data.get("date")
         start_time = cleaned_data.get("time")
         doctor = cleaned_data.get("doctor")

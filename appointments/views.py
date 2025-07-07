@@ -38,7 +38,7 @@ class MainView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        doctors = Doctor.objects.all()
+        doctors = Doctor.objects.all().prefetch_related("user")
         context["doctors"] = doctors
 
         departments = Department.objects.all()
@@ -59,14 +59,16 @@ class UserAppointmentsView(LoginRequiredMixin, ListView):
         now_time = timezone.now().time()
         user = self.request.user
 
-        upcoming_appointment = Appointment.objects.filter(
-            Q(date__gt=today) | Q(date=today, time__gte=now_time),
+        common_qs = Appointment.objects.select_related("doctor__user").filter(
             user=user.patient_profile,
+        )
+
+        upcoming_appointment = common_qs.filter(
+            Q(date__gt=today) | Q(date=today, time__gte=now_time)
         ).order_by("date", "time")
 
-        past_appointment = Appointment.objects.filter(
-            Q(date__lt=today) | Q(date=today, time__lt=now_time),
-            user=user.patient_profile,
+        past_appointment = common_qs.filter(
+            Q(date__lt=today) | Q(date=today, time__lt=now_time)
         ).order_by("date", "time")
 
         context["upcoming_appointment"], context["past_appointment"] = (
@@ -88,14 +90,15 @@ class DoctorAppointmentsView(PermissionRequiredMixin, ListView):
         now_time = timezone.now().time()
         user = self.request.user
 
-        upcoming_appointment = Appointment.objects.filter(
-            Q(date__gt=today) | Q(date=today, time__gte=now_time),
+        common_qs = Appointment.objects.select_related("user__user").filter(
             doctor=user.doctor_profile,
         )
+        upcoming_appointment = common_qs.filter(
+            Q(date__gt=today) | Q(date=today, time__gte=now_time),
+        )
 
-        past_appointment = Appointment.objects.filter(
+        past_appointment = common_qs.filter(
             Q(date__lt=today) | Q(date=today, time__lt=now_time),
-            doctor=user.doctor_profile,
         )
 
         context["upcoming_appointment"] = upcoming_appointment.order_by("date", "time")
@@ -121,7 +124,7 @@ class AppointmentListView(ListView, FilterView):
         if week_param:
             start_of_week = datetime.strptime(week_param, "%Y-%m-%d")
         else:
-            today = datetime.today()
+            today = datetime.today().date()
             start_of_week = today - timedelta(days=today.weekday())
 
         previous_week = (start_of_week - timedelta(days=7)).strftime("%Y-%m-%d")
@@ -135,7 +138,7 @@ class AppointmentListView(ListView, FilterView):
 
         start_of_week, end_of_week, previous_week, next_week = self.get_week_param()
 
-        all_doctors = self.get_queryset()
+        all_doctors = self.get_queryset().select_related("user")
 
         doctor_week_schedule = DoctorScheduleService.get_doctor_schedule_week(
             start_of_week, end_of_week, all_doctors

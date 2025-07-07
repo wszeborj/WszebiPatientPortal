@@ -68,12 +68,12 @@ def send_upcoming_appointment_reminders():
     appointments = Appointment.objects.filter(
         date=tomorrow, is_confirmed=True
     ).select_related("user__user", "doctor__user")
-    print(f"Found {appointments.count()} appointments for {tomorrow}")
+    # print(f"Found {appointments.count()} appointments for {tomorrow}")
 
     for appointment in appointments:
         try:
             send_appointment_reminder_email(appointment)
-            print(f"Sent reminder for appointment id ={appointment.id}")
+            # print(f"Sent reminder for appointment id ={appointment.id}")
         except Exception as e:
             print(
                 f"Error during sending of reminder for appointment id ={appointment.id}: {e}"

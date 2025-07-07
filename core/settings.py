@@ -36,6 +36,8 @@ INSTALLED_APPS = [
     "crispy_bootstrap4",
     "bootstrap4",
     "django_filters",
+    "debug_toolbar",
+    "silk",
 ]
 
 INSTALLED_EXTENSIONS = [
@@ -47,6 +49,7 @@ INSTALLED_EXTENSIONS = [
 INSTALLED_APPS += INSTALLED_EXTENSIONS
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -54,6 +57,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "silk.middleware.SilkyMiddleware",
     # "users.middleware.CompleteDoctorProfileMiddleware",
 ]
 
@@ -127,7 +131,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "/static/"
+STATIC_URL = "static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 MEDIA_URL = "/media/"
@@ -168,3 +172,7 @@ DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL")
 
 CELERY_BROKER_URL = env("CELERY_BROKER")
 CELERY_RESULT_BACKEND = env("CELERY_BACKEND")
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]

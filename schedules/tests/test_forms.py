@@ -33,7 +33,6 @@ class ScheduleDayFormTests(TestCase):
                 "end_time": time(9, 0),
                 "interval": 20,
             },
-            user=self.doctor.user,
         )
         self.assertFalse(form.is_valid())
         self.assertIn("End time is before start time.", form.non_field_errors())
@@ -81,7 +80,6 @@ class ScheduleDayFormTests(TestCase):
                 "end_time": time(10, 0),
                 # missing interval
             },
-            user=self.doctor.user,
         )
         self.assertFalse(form.is_valid())
         self.assertIn(
