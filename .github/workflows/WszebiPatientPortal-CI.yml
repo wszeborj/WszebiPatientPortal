@@ -22,6 +22,8 @@ jobs:
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
           POSTGRES_DB: ${{ vars.DB_NAME }}
           POSTGRES_USER: ${{ vars.DB_USER }}
+          POSTGRES_HOST: ${{ vars.DB_HOST }}
+          POSTGRES_PORT: ${{ vars.DB_PORT }}
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
