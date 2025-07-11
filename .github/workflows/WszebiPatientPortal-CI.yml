@@ -21,7 +21,7 @@ jobs:
         env:
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
           POSTGRES_DB: ${{ vars.DB_NAME }}
-          POSTGRES_USER: ${{ secrets.DB_USER }}
+          POSTGRES_USER: ${{ vars.DB_USER }}
           POSTGRES_HOST: ${{ vars.DB_HOST }}
           POSTGRES_PORT: ${{ vars.DB_PORT }}
         options: >-
@@ -48,11 +48,12 @@ jobs:
         poetry install --no-root
     - name: Run Tests
       run: |
+        python manage.py migrate
         python manage.py test
       env:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         DB_NAME: ${{ vars.DB_NAME }}
-        DB_USER: ${{ secrets.DB_USER }}
+        DB_USER: ${{ sec.DB_USER }}
         DB_HOST: ${{ vars.DB_HOST }}
         DB_PORT: ${{ vars.DB_PORT }}
         EMAIL_HOST: ${{ vars.EMAIL_HOST }}
