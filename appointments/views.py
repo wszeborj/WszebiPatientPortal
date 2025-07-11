@@ -122,7 +122,7 @@ class AppointmentListView(ListView, FilterView):
         week_param = self.request.GET.get("week")
 
         if week_param:
-            start_of_week = datetime.strptime(week_param, "%Y-%m-%d")
+            start_of_week = datetime.strptime(week_param, "%Y-%m-%d").date()
         else:
             today = datetime.today().date()
             start_of_week = today - timedelta(days=today.weekday())
