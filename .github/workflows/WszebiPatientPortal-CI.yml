@@ -20,7 +20,7 @@ jobs:
         image: postgres:16.3
         env:
           POSTGRES_PASSWORD: ${{ secrets.DB_PASSWORD }}
-          POSTGRES_DB: ${{ vars.DB_NAME }}
+          POSTGRES_DB: ${{ secrets.DB_NAME }}
           POSTGRES_USER: ${{ secrets.DB_USER }}
           POSTGRES_HOST: ${{ vars.DB_HOST }}
           POSTGRES_PORT: ${{ vars.DB_PORT }}
@@ -52,7 +52,7 @@ jobs:
         python manage.py test
       env:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-        DB_NAME: ${{ vars.DB_NAME }}
+        DB_NAME: ${{ secrets.DB_NAME }}
         DB_USER: ${{ secrets.DB_USER }}
         DB_HOST: ${{ vars.DB_HOST }}
         DB_PORT: ${{ vars.DB_PORT }}
