@@ -24,6 +24,7 @@ pytest = "^8.3.5"
 django-filter = "^25.1"
 django-silk = "^5.4.0"
 django-debug-toolbar = "^5.2.0"
+safety = "^3.6.0"
 
 
 
