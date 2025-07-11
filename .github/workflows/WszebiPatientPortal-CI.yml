@@ -53,7 +53,7 @@ jobs:
       env:
         DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
         DB_NAME: ${{ vars.DB_NAME }}
-        DB_USER: ${{ sec.DB_USER }}
+        DB_USER: ${{ secrets.DB_USER }}
         DB_HOST: ${{ vars.DB_HOST }}
         DB_PORT: ${{ vars.DB_PORT }}
         EMAIL_HOST: ${{ vars.EMAIL_HOST }}
