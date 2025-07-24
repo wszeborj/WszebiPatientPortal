@@ -16,6 +16,7 @@ from users.factories import (
     UserFactory,
 )
 from users.models import User
+from users.views import UserProcessing
 
 
 class TestRegisterUserViews(TestCase):
@@ -122,15 +123,55 @@ class TestRegisterUserViews(TestCase):
         tested_user.refresh_from_db()
         self.assertTrue(tested_user.is_active)
 
-    # def test_activate_view_failure_GET(self):
-    #     uid = "invalid_uid"
-    #     token = "invalid_token"
-    #     activate_url = reverse("users:activate", args=[uid, token])
-    #
-    #     response = self.client.get(path=activate_url, args=[uid, token], follow=True)
-    #
-    #     self.assertContains(response, "Activation link is invalid!")
-    #     self.assertEqual(response.status_code, HTTPStatus.OK)
+
+class TestActivateView(TestCase):
+    def test_activate_valid_token_for_patient(self):
+        user = UserFactory(is_active=False, role=User.Role.PATIENT)
+        patient = PatientFactory(user=user)
+
+        uid = urlsafe_base64_encode(force_bytes(patient.user.pk))
+        token = default_token_generator.make_token(patient.user)
+        url = reverse("users:activate", kwargs={"uidb64": uid, "token": token})
+
+        response = self.client.get(url, follow=True)
+        user.refresh_from_db()
+
+        self.assertTrue(user.is_active)
+        self.assertRedirects(response, reverse("users:login"))
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn("Your account has been activated!", [m.message for m in messages])
+
+    def test_activate_valid_token_for_doctor(self):
+        user = UserFactory(is_active=False, role=User.Role.DOCTOR)
+        doctor = DoctorFactory(user=user)
+
+        uid = urlsafe_base64_encode(force_bytes(doctor.user.pk))
+        token = default_token_generator.make_token(doctor.user)
+        url = reverse("users:activate", kwargs={"uidb64": uid, "token": token})
+
+        response = self.client.get(url, follow=True)
+        user.refresh_from_db()
+
+        self.assertTrue(user.is_active)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            "Your account has been activated, but you still need to complete and confirm your doctor's details.",
+            [m.message for m in messages],
+        )
+        self.assertRedirects(
+            response,
+            f"{reverse('users:login')}?next={reverse('users:complete-doctor-data')}",
+        )
+
+    def test_activate_invalid_token(self):
+        uid = urlsafe_base64_encode(force_bytes(999))  # non-existent user
+        token = "invalid-token"
+        url = reverse("users:activate", kwargs={"uidb64": uid, "token": token})
+
+        response = self.client.get(url, follow=True)
+        messages = list(get_messages(response.wsgi_request))
+        self.assertRedirects(response, reverse("users:register"))
+        self.assertIn("Activation link is invalid!", [m.message for m in messages])
 
 
 class TestCompleteDoctorDataViews(TestCase):
@@ -206,9 +247,18 @@ class TestDepartmentListViews(TestCase):
         self.assertEqual(10, len(response.context["departments"]))
 
 
-# class TestSpecializationListViews(TestCase):
-#     def setUp(self):
-#         self.department_list_url = reverse("users:doctor-list")
+class TestSpecializationDetailsView(TestCase):
+    def setUp(self):
+        self.specialization = SpecializationFactory()
+        self.url = reverse(
+            "users:specialization-details", args=[self.specialization.pk]
+        )
+
+    def test_specialization_detail_view(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, HTTPStatus.OK)
+        self.assertTemplateUsed(response, "users/specialization_details.html")
+        self.assertEqual(response.context["specialization"], self.specialization)
 
 
 class TestCustomLoginView(TestCase):
@@ -242,3 +292,25 @@ class TestCustomLoginView(TestCase):
         response = self.client.post(self.custom_login_url)
         self.assertEqual(response.status_code, HTTPStatus.OK)
         self.assertTemplateUsed(response, "users/login.html")
+
+
+class TestUserProcessing(TestCase):
+    def test_send_user_activation_mail(self):
+        user = UserFactory()
+        request = self.client.request().wsgi_request
+        UserProcessing.send_user_activation_mail(request=request, user=user)
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(user.email, mail.outbox[0].to)
+        self.assertIn("Activation link to your account", mail.outbox[0].subject)
+
+    def test_confirmation_doctor_profile(self):
+        user = UserFactory()
+        request = self.client.request().wsgi_request
+        UserProcessing.confirmation_doctor_profile(request=request, user=user)
+
+        self.assertEqual(len(mail.outbox), 1)
+        self.assertIn(user.email, mail.outbox[0].to)
+        self.assertIn(
+            "Confirmation link to your doctor profile", mail.outbox[0].subject
+        )

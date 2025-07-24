@@ -1,14 +1,50 @@
-from datetime import time, timedelta
+from datetime import date, time, timedelta
 
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
 from appointments.factories import AppointmentFactory
 from appointments.forms import AppointmentNoteForm
 from appointments.models import Appointment
+from appointments.views import AppointmentListView
 from schedules.factories import ScheduleDayFactory
 from users.factories import DoctorFactory, PatientFactory
+
+
+class AppointmentListViewTests(TestCase):
+    def setUp(self):
+        self.factory = RequestFactory()
+
+    def test_get_week_param_with_valid_week(self):
+        request = self.factory.get("/appointments/?week=2025-07-15")
+        view = AppointmentListView()
+        view.request = request
+
+        start_of_week, end_of_week, previous_week, next_week = view.get_week_param()
+
+        self.assertEqual(start_of_week, date(2025, 7, 15))
+        self.assertEqual(end_of_week, date(2025, 7, 21))
+        self.assertEqual(previous_week, "2025-07-08")
+        self.assertEqual(next_week, "2025-07-22")
+
+    def test_get_week_param_without_week(self):
+        today = date.today()
+        expected_start = today - timedelta(days=today.weekday())
+        expected_end = expected_start + timedelta(days=6)
+        expected_prev = (expected_start - timedelta(days=7)).strftime("%Y-%m-%d")
+        expected_next = (expected_start + timedelta(days=7)).strftime("%Y-%m-%d")
+
+        request = self.factory.get("/appointments/")
+        view = AppointmentListView()
+        view.request = request
+
+        start_of_week, end_of_week, previous_week, next_week = view.get_week_param()
+
+        self.assertEqual(start_of_week, expected_start)
+        self.assertEqual(end_of_week, expected_end)
+        self.assertEqual(previous_week, expected_prev)
+        self.assertEqual(next_week, expected_next)
 
 
 class UserAppointmentsViewTest(TestCase):

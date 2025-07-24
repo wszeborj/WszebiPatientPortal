@@ -98,8 +98,8 @@ class Command(BaseCommand):
         self.stdout.write("Creating superuser...")
         self.create_super_user()
 
-        create_permission_groups()
         self.stdout.write("Creating permission groups...")
+        create_permission_groups()
 
         self.stdout.write("Creating doctors...")
         doctors = [DoctorFactory(confirmed=True) for _ in range(20)]

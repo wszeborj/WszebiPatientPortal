@@ -17,8 +17,6 @@ class ScheduleCalendarView(PermissionRequiredMixin, TemplateView):
         "schedules.view_scheduleday",
     )
 
-    # permission_denied_message = "You have no access to this calendar"
-
     def get_context_data(self, **kwargs):
         user = self.request.user
         if hasattr(user, "doctor_profile"):

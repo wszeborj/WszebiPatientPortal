@@ -45,16 +45,25 @@ def create_permission_groups():
     groups_permissions["staff_group"].extend(groups_permissions.get("patient_group"))
     groups_permissions["staff_group"].extend(groups_permissions.get("doctor_group"))
 
+    existing_groups = Group.objects.filter(
+        name__in=groups_permissions.keys()
+    ).values_list("name", flat=True)
+    if set(groups_permissions.keys()).issubset(set(existing_groups)):
+        print("Groups already exist. Skipping creation.")
+        return
+
     perm_models = [Appointment, ScheduleDay, Specialization]
 
-    for group_name, permissions in groups_permissions.items():
+    for group_name, permission_codenames in groups_permissions.items():
         group, created = Group.objects.get_or_create(name=group_name)
-        for perm_model in perm_models:
-            content_type = ContentType.objects.get_for_model(perm_model)
-            permissions = Permission.objects.filter(content_type=content_type)
-            for perm in permissions:
-                if perm.codename in groups_permissions[group_name]:
-                    group.permissions.add(perm)
+        if created:
+            print(f"Created group: {group_name}")
+            for perm_model in perm_models:
+                content_type = ContentType.objects.get_for_model(perm_model)
+                all_permissions = Permission.objects.filter(content_type=content_type)
+                for perm in all_permissions:
+                    if perm.codename in permission_codenames:
+                        group.permissions.add(perm)
 
 
 def assign_group_to_user():

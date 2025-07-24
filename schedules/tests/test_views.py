@@ -2,13 +2,37 @@ from datetime import date, time, timedelta
 
 from django.contrib.auth.models import Permission
 from django.contrib.messages import get_messages
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.urls import reverse
 
 from schedules.factories import ScheduleDayFactory
 from schedules.forms import ScheduleDayForm
 from schedules.models import ScheduleDay
-from users.factories import DoctorFactory
+from users.factories import DoctorFactory, UserFactory
+
+
+@tag("x")
+class TestScheduleCalendarView(TestCase):
+    def test_schedule_for_staff_user(self):
+        user = UserFactory(is_staff=True)
+        ScheduleDayFactory.create_batch(3)
+
+        self.client.force_login(user)
+        response = self.client.get(reverse("schedules:schedule-calendar"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "calendar")
+        self.assertEqual(len(response.context["schedule_days"]), 3)
+
+    def test_schedule_for_non_doctor_non_staff_user(self):
+        patient = UserFactory(role="PATIENT")
+        ScheduleDayFactory.create_batch(2)
+
+        self.client.force_login(patient)
+        response = self.client.get(reverse("schedules:schedule-calendar"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["schedule_days"], [])
 
 
 class ScheduleDayViewTests(TestCase):
@@ -51,7 +75,26 @@ class ScheduleDayViewTests(TestCase):
         self.assertRedirects(response, reverse("schedules:schedule-calendar"))
         self.assertTrue(ScheduleDay.objects.filter(doctor=self.doctor).exists())
         messages = list(get_messages(response.wsgi_request))
-        self.assertIn("Schedule saved!", str(messages[0]))
+        self.assertIn("Schedule saved!", [m.message for m in messages])
+
+    def test_post_with_action_save_redirects_and_sets_success_message(self):
+        url = reverse("schedules:schedule-day-create")
+        data = {
+            "work_date": date.today(),
+            "start_time": time(8, 0),
+            "end_time": time(10, 0),
+            "interval": 20,
+            "action": "save",
+        }
+
+        response = self.client.post(url, data, follow=True)
+        self.assertRedirects(response, url)
+
+        messages = list(get_messages(response.wsgi_request))
+        self.assertIn(
+            "Schedule saved! You can add another day.", [m.message for m in messages]
+        )
+        self.assertTrue(ScheduleDay.objects.filter(doctor=self.doctor).exists())
 
     def test_schedule_day_create_post_invalid(self):
         url = reverse("schedules:schedule-day-create")

@@ -21,7 +21,7 @@ The platform supports email notifications and weekly schedule automation via Cel
 <li>PostgreSQL</li>
 <li>Plotly</li>
 <li>Stripe</li>
-<li>Requests</li>
+<li>requests</li>
 <li>Celery + Redis</li>
 <li>Sentry</li>
 <li>unittest</li>
@@ -54,6 +54,10 @@ poetry run python manage.py migrate
 Run application
 ```bash
 poetry run python manage.py runserver
+```
+To create permission groups
+```bash
+poetry run python manage.py create_permission_groups
 ```
 To create superuser and generate random 20 doctors with assigned specializations and departments
 and generate random 100 patients

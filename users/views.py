@@ -14,6 +14,7 @@ from django.views.generic import DetailView, FormView, ListView, View
 
 from .forms import DoctorRegistrationForm, UserRegistrationForm
 from .models import Department, Doctor, Specialization, User
+from .services.perm_assign import assign_user_to_permission_group
 
 # from django.contrib.auth.mixins import PermissionRequiredMixin
 
@@ -122,6 +123,7 @@ class ActivateView(View):
             user=user, token=token
         ):
             user.is_active = True
+            assign_user_to_permission_group(user)
             user.save()
 
             if user.role == User.Role.DOCTOR:
@@ -134,9 +136,10 @@ class ActivateView(View):
                 return redirect("users:complete-doctor-data")
 
             messages.success(request, "Your account has been activated!")
+
             return redirect("users:login")
         else:
-            messages.warning(request, "Activation link is invalid!")
+            messages.error(request, "Activation link is invalid!")
             return redirect("users:register")
 
 
