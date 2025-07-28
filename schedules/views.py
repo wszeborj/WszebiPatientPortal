@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib import messages
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.shortcuts import redirect
@@ -6,6 +8,8 @@ from django.views.generic import CreateView, DeleteView, TemplateView, UpdateVie
 
 from .forms import ScheduleDayForm
 from .models import ScheduleDay
+
+logger = logging.getLogger(__name__)
 
 
 class ScheduleCalendarView(PermissionRequiredMixin, TemplateView):
@@ -57,6 +61,7 @@ class ScheduleDayCreateView(CreateView):
             return redirect("schedules:schedule-day-create")
 
     def form_invalid(self, form):
+        logger.warning("FORM ERRORS:", form.errors)
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(self.request, f"Error in field {field}: {error}")

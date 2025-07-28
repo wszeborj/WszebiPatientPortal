@@ -2,7 +2,7 @@ from datetime import date, time, timedelta
 
 from django.contrib.auth.models import Permission
 from django.contrib.messages import get_messages
-from django.test import TestCase, tag
+from django.test import TestCase
 from django.urls import reverse
 
 from schedules.factories import ScheduleDayFactory
@@ -11,10 +11,10 @@ from schedules.models import ScheduleDay
 from users.factories import DoctorFactory, UserFactory
 
 
-@tag("x")
 class TestScheduleCalendarView(TestCase):
     def test_schedule_for_staff_user(self):
         user = UserFactory(is_staff=True)
+
         ScheduleDayFactory.create_batch(3)
 
         self.client.force_login(user)
@@ -75,7 +75,7 @@ class ScheduleDayViewTests(TestCase):
         self.assertRedirects(response, reverse("schedules:schedule-calendar"))
         self.assertTrue(ScheduleDay.objects.filter(doctor=self.doctor).exists())
         messages = list(get_messages(response.wsgi_request))
-        self.assertIn("Schedule saved!", [m.message for m in messages])
+        self.assertIn("Schedule saved!.", [m.message for m in messages])
 
     def test_post_with_action_save_redirects_and_sets_success_message(self):
         url = reverse("schedules:schedule-day-create")

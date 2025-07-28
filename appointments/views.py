@@ -1,3 +1,4 @@
+import logging
 from datetime import date, datetime, timedelta
 from typing import Tuple
 
@@ -30,6 +31,8 @@ from .services.email_utils import (
     send_appointment_deleted_email,
     send_note_added_email,
 )
+
+logger = logging.getLogger(__name__)
 
 
 class MainView(TemplateView):
@@ -174,7 +177,7 @@ class AppointmentCreateView(PermissionRequiredMixin, CreateView):
         )
 
     def form_invalid(self, form):
-        print("FORM ERRORS:", form.errors)
+        logger.warning("FORM ERRORS:", form.errors)
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(self.request, f"Issue in field {field}: {error}")

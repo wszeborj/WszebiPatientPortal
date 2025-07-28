@@ -1,7 +1,8 @@
 import factory
-from django.contrib.auth.models import Group
 from factory.django import DjangoModelFactory
 from faker import Faker
+
+from users.services.perm_assign import assign_user_to_permission_group
 
 from .models import Department, Doctor, Patient, Specialization, User
 
@@ -99,20 +100,7 @@ class UserFactory(DjangoModelFactory):
     def assign_group(self, create, extracted, **kwargs):
         if not create:
             return
-
-        role_to_group = {
-            User.Role.PATIENT: "patient_group",
-            User.Role.DOCTOR: "doctor_group",
-            User.Role.ADMIN: "staff_group",
-        }
-
-        group_name = role_to_group.get(self.role)
-        if group_name:
-            group, created = Group.objects.get_or_create(name=group_name)
-            self.groups.add(group)
-
-            if created:
-                add_permissions_to_group(group, self.role)
+        assign_user_to_permission_group(self)
 
     @factory.post_generation
     def set_password(self, create, extracted, **kwargs):

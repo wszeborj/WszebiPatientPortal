@@ -1,3 +1,5 @@
+import logging
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,6 +17,8 @@ from django.views.generic import DetailView, FormView, ListView, View
 from .forms import DoctorRegistrationForm, UserRegistrationForm
 from .models import Department, Doctor, Specialization, User
 from .services.perm_assign import assign_user_to_permission_group
+
+logger = logging.getLogger(__name__)
 
 # from django.contrib.auth.mixins import PermissionRequiredMixin
 
@@ -38,7 +42,7 @@ class RegisterUserFormView(FormView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        print("FORM ERRORS:", form.errors)
+        logger.warning("FORM ERRORS:", form.errors)
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(self.request, f"Issue in field {field}: {error}")
@@ -60,7 +64,10 @@ class CompleteDoctorDataView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        print("Form errors:", form.errors)
+        logger.warning("FORM ERRORS:", form.errors)
+        for field, errors in form.errors.items():
+            for error in errors:
+                messages.error(self.request, f"Error in field {field}: {error}")
         return super().form_invalid(form)
 
 
