@@ -42,7 +42,7 @@ class RegisterUserFormView(FormView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        logger.warning("FORM ERRORS:", form.errors)
+        logger.warning(f"FORM ERRORS: {form.errors}")
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(self.request, f"Issue in field {field}: {error}")
@@ -64,7 +64,7 @@ class CompleteDoctorDataView(LoginRequiredMixin, FormView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        logger.warning("FORM ERRORS:", form.errors)
+        logger.warning(f"FORM ERRORS: {form.errors}")
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(self.request, f"Error in field {field}: {error}")

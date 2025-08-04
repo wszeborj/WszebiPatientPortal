@@ -2,18 +2,20 @@ from datetime import date, time, timedelta
 
 from django.contrib.auth.models import Permission
 from django.contrib.messages import get_messages
-from django.test import TestCase
+from django.test import TestCase, tag
 from django.urls import reverse
 
 from schedules.factories import ScheduleDayFactory
 from schedules.forms import ScheduleDayForm
 from schedules.models import ScheduleDay
 from users.factories import DoctorFactory, UserFactory
+from users.models import User
 
 
+@tag("x")
 class TestScheduleCalendarView(TestCase):
     def test_schedule_for_staff_user(self):
-        user = UserFactory(is_staff=True)
+        user = UserFactory(role=User.Role.ADMIN, is_staff=True)
 
         ScheduleDayFactory.create_batch(3)
 
@@ -25,14 +27,13 @@ class TestScheduleCalendarView(TestCase):
         self.assertEqual(len(response.context["schedule_days"]), 3)
 
     def test_schedule_for_non_doctor_non_staff_user(self):
-        patient = UserFactory(role="PATIENT")
+        patient = UserFactory(role=User.Role.PATIENT)
         ScheduleDayFactory.create_batch(2)
 
         self.client.force_login(patient)
         response = self.client.get(reverse("schedules:schedule-calendar"))
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["schedule_days"], [])
+        self.assertEqual(response.status_code, 403)
 
 
 class ScheduleDayViewTests(TestCase):

@@ -32,5 +32,5 @@ class TestAssignUserToStaffGroup(TestCase):
 
     def test_staff_group_assigned(self):
         assign_user_to_permission_group(self.user)
-        group = Group.objects.get(name="staff_group")
+        group = Group.objects.get(name="admin_group")
         self.assertIn(group, self.user.groups.all())

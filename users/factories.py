@@ -1,71 +1,14 @@
 import factory
+from django.contrib.auth.models import Group
 from factory.django import DjangoModelFactory
 from faker import Faker
 
 from users.services.perm_assign import assign_user_to_permission_group
+from users.services.permissions_in_groups import create_or_update_group_with_permissions
 
 from .models import Department, Doctor, Patient, Specialization, User
 
 fake = Faker("pl_PL")
-
-
-def add_permissions_to_group(group, role):
-    from django.contrib.auth.models import Permission
-
-    if role == User.Role.DOCTOR:
-        permissions = [
-            "add_scheduleday",
-            "change_scheduleday",
-            "delete_scheduleday",
-            "view_scheduleday",
-            "add_specialization",
-            "view_scheduleday",
-            "view_appointment",
-            "change_appointment",
-            "delete_appointment",
-        ]
-    elif role == User.Role.PATIENT:
-        permissions = [
-            "add_appointment",
-            "view_appointment",
-            "delete_appointment",
-        ]
-    elif role == User.Role.ADMIN:
-        permissions = [
-            "add_user",
-            "change_user",
-            "delete_user",
-            "view_user",
-            "add_doctor",
-            "change_doctor",
-            "delete_doctor",
-            "view_doctor",
-            "add_patient",
-            "change_patient",
-            "delete_patient",
-            "view_patient",
-            "add_scheduleday",
-            "change_scheduleday",
-            "delete_scheduleday",
-            "view_scheduleday",
-            "add_specialization",
-            "change_specialization",
-            "delete_specialization",
-            "view_specialization",
-            "add_appointment",
-            "change_appointment",
-            "delete_appointment",
-            "view_appointment",
-        ]
-    else:
-        permissions = []
-
-    for codename in permissions:
-        try:
-            perm = Permission.objects.get(codename=codename)
-            group.permissions.add(perm)
-        except Permission.DoesNotExist:
-            pass
 
 
 class UserFactory(DjangoModelFactory):
@@ -100,6 +43,10 @@ class UserFactory(DjangoModelFactory):
     def assign_group(self, create, extracted, **kwargs):
         if not create:
             return
+        try:
+            Group.objects.get(name=f"{self.role.lower()}_group")
+        except Group.DoesNotExist:
+            create_or_update_group_with_permissions(self.role)
         assign_user_to_permission_group(self)
 
     @factory.post_generation

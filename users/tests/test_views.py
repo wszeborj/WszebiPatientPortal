@@ -92,6 +92,7 @@ class TestRegisterUserViews(TestCase):
         self.assertEqual(len(mail.outbox), 0)
 
         form = response.context["form"]
+        self.assertFalse(response.context["form"].is_valid())
         self.assertIn("password2", form.errors)
         self.assertIn("The two password fields didn’t match.", form.errors["password2"])
 
@@ -295,22 +296,23 @@ class TestCustomLoginView(TestCase):
 
 
 class TestUserProcessing(TestCase):
+    def setUp(self):
+        self.user = UserFactory()
+
     def test_send_user_activation_mail(self):
-        user = UserFactory()
         request = self.client.request().wsgi_request
-        UserProcessing.send_user_activation_mail(request=request, user=user)
+        UserProcessing.send_user_activation_mail(request=request, user=self.user)
 
         self.assertEqual(len(mail.outbox), 1)
-        self.assertIn(user.email, mail.outbox[0].to)
+        self.assertIn(self.user.email, mail.outbox[0].to)
         self.assertIn("Activation link to your account", mail.outbox[0].subject)
 
     def test_confirmation_doctor_profile(self):
-        user = UserFactory()
         request = self.client.request().wsgi_request
-        UserProcessing.confirmation_doctor_profile(request=request, user=user)
+        UserProcessing.confirmation_doctor_profile(request=request, user=self.user)
 
         self.assertEqual(len(mail.outbox), 1)
-        self.assertIn(user.email, mail.outbox[0].to)
+        self.assertIn(self.user.email, mail.outbox[0].to)
         self.assertIn(
             "Confirmation link to your doctor profile", mail.outbox[0].subject
         )
