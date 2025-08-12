@@ -7,7 +7,7 @@
 ## General info
 <details>
 <summary>Click here to see general information about <b>Project</b>!</summary>
-<b>WszbiPatientPortal</b> is a healthcare appointment management system.
+<b>WszbiPatientPortal</b> is an appointment management system.
 It allows patients to book appointments, doctors to manage their schedules and notes,
 and administrators to control the entire system.
 The platform supports email notifications and weekly schedule automation via Celery.
@@ -19,8 +19,6 @@ The platform supports email notifications and weekly schedule automation via Cel
 <li>Django</li>
 <li>Bootstrap4</li>
 <li>PostgreSQL</li>
-<li>Plotly</li>
-<li>Stripe</li>
 <li>requests</li>
 <li>Celery + Redis</li>
 <li>Sentry</li>
@@ -29,6 +27,7 @@ The platform supports email notifications and weekly schedule automation via Cel
 <li>Docker-Compose & Docker</li>
 <li>Poetry</li>
 <li>Silk / Django Debug Toolbar</li>
+<li>Coverage</li>
 </ul>
 
 

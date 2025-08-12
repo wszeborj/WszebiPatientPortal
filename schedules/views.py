@@ -28,8 +28,6 @@ class ScheduleCalendarView(PermissionRequiredMixin, TemplateView):
             schedule_days = ScheduleDay.objects.filter(doctor=doctor)
         elif self.request.user.is_staff:
             schedule_days = ScheduleDay.objects.all()
-        else:
-            schedule_days = []
 
         context = super().get_context_data(**kwargs)
         context["schedule_days"] = schedule_days
@@ -61,7 +59,7 @@ class ScheduleDayCreateView(CreateView):
             return redirect("schedules:schedule-day-create")
 
     def form_invalid(self, form):
-        logger.warning(f"FORM ERRORS: {form.errors}")
+        logger.error(f"FORM ERRORS: {form.errors}")
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(self.request, f"Error in field {field}: {error}")

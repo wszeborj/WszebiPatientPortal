@@ -12,7 +12,7 @@ from ..models import Appointment
 class DoctorScheduleService:
     @staticmethod
     def get_doctor_schedule_week(
-        start_of_week: date, end_of_week: date, doctors: Doctor
+        start_of_week: date, end_of_week: date, doctors: List[Doctor] = None
     ) -> Dict[Doctor, Dict[date, List[Dict[str, str | bool]]]]:
         if doctors is None:
             doctors = Doctor.objects.select_related("user").all()

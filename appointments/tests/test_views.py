@@ -1,15 +1,17 @@
 from datetime import date, time, timedelta
+from unittest.mock import patch
 
 from django.test import RequestFactory, TestCase
 from django.urls import reverse
 from django.utils import timezone
 
 from appointments.factories import AppointmentFactory
-from appointments.forms import AppointmentNoteForm
+from appointments.forms import AppointmentForm, AppointmentNoteForm
 from appointments.models import Appointment
 from appointments.views import AppointmentListView
 from schedules.factories import ScheduleDayFactory
-from users.factories import DoctorFactory, PatientFactory
+from users.factories import DoctorFactory, PatientFactory, UserFactory
+from users.models import User
 
 
 class AppointmentListViewTests(TestCase):
@@ -127,25 +129,40 @@ class AppointmentCreateViewTest(TestCase):
             end_time=time(12, 0),
             interval=timedelta(minutes=20),
         )
+        self.url = reverse("appointments:appointment-create")
 
     def test_get_appointment_create_form(self):
-        url = reverse("appointments:appointment-create")
-        response = self.client.get(url)
+        response = self.client.get(self.url)
 
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "appointments/appointment_form.html")
 
     def test_post_valid_appointment_creates_object(self):
-        url = reverse("appointments:appointment-create")
         data = {
             "doctor": self.doctor.pk,
             "date": timezone.now().date() + timedelta(days=1),
             "time": time(10, 0),
         }
-        response = self.client.post(url, data)
+        response = self.client.post(self.url, data)
 
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Appointment.objects.count(), 1)
+
+    @patch("appointments.views.logger")
+    def test_post_invalid_form_appointment_log_error(self, mock_logger):
+        data = {}
+        response = self.client.post(self.url, data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(Appointment.objects.count(), 0)
+
+        mock_logger.error.assert_called()
+
+        form = AppointmentForm(data={})
+        form.instance.user = self.patient
+        self.assertFalse(form.is_valid())
+
+        self.assertIn("Missing data", str(form.errors["__all__"]))
 
 
 class AppointmentConfirmationViewTest(TestCase):
@@ -167,11 +184,18 @@ class AppointmentConfirmationViewTest(TestCase):
             user=self.patient, is_confirmed=False, date=self.work_date, time=time(10, 0)
         )
 
-    def test_confirm_appointment(self):
-        url = reverse(
+        self.url = reverse(
             "appointments:appointment-confirm", kwargs={"pk": self.appointment.pk}
         )
-        response = self.client.post(url)
+
+    def test_appointment_confirm_get(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "appointments/appointment_confirm.html")
+
+    def test_appointment_confirm_post(self):
+        response = self.client.post(self.url)
 
         self.appointment.refresh_from_db()
         self.assertTrue(self.appointment.is_confirmed)
@@ -185,13 +209,36 @@ class AppointmentDeleteViewTest(TestCase):
         self.appointment = AppointmentFactory.create(
             doctor=self.doctor, user=self.patient
         )
-        self.client.force_login(self.patient.user)
 
-    def test_delete_appointment_redirects_correctly(self):
+    def test_delete_appointment_as_patient_redirects_to_user_appointments(self):
+        self.client.force_login(self.patient.user)
         url = reverse("appointments:appointment-delete", args=[self.appointment.pk])
         response = self.client.post(url)
         self.assertRedirects(response, reverse("appointments:user-appointments"))
         self.assertFalse(Appointment.objects.filter(pk=self.appointment.pk).exists())
+
+    def test_delete_appointment_as_doctor_redirects_to_doctor_appointments(self):
+        self.client.force_login(self.doctor.user)
+        appointment = AppointmentFactory(doctor=self.doctor)
+
+        response = self.client.post(
+            reverse("appointments:appointment-delete", kwargs={"pk": appointment.pk}),
+            follow=True,
+        )
+
+        self.assertRedirects(response, reverse("appointments:doctor-appointments"))
+
+    def test_delete_appointment_as_admin_redirects_to_appointments_list(self):
+        admin_user = UserFactory(role=User.Role.ADMIN)
+        self.client.force_login(admin_user)
+        appointment = AppointmentFactory()
+
+        response = self.client.post(
+            reverse("appointments:appointment-delete", kwargs={"pk": appointment.pk}),
+            follow=True,
+        )
+
+        self.assertRedirects(response, reverse("appointments:appointments-list"))
 
 
 class AppointmentNoteViewTest(TestCase):
@@ -199,9 +246,9 @@ class AppointmentNoteViewTest(TestCase):
         self.doctor = DoctorFactory()
         self.patient = PatientFactory()
         self.appointment = AppointmentFactory(doctor=self.doctor, user=self.patient)
-        self.client.force_login(self.doctor.user)
 
     def test_note_detail_view_as_doctor(self):
+        self.client.force_login(self.doctor.user)
         url = reverse("appointments:appointment-note", args=[self.appointment.pk])
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
@@ -214,6 +261,15 @@ class AppointmentNoteViewTest(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.appointment.doctor)
+
+    # todo: think about different output
+    def test_note_detail_view_as_user_without_profile(self):
+        user = UserFactory(role=User.Role.ADMIN)
+        self.client.force_login(user)
+        response = self.client.get(
+            reverse("appointments:appointment-note", args=[self.appointment.pk])
+        )
+        self.assertEqual(response.status_code, 404)
 
 
 class AppointmentNoteUpdateViewTest(TestCase):

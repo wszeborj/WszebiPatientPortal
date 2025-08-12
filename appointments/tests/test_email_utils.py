@@ -60,3 +60,23 @@ class EmailUtilsTestCase(TestCase):
 
         send_upcoming_appointment_reminders()
         mock_reminder_func.assert_called_once_with(self.appointment)
+
+    @patch("appointments.services.email_utils.logger")
+    @patch("appointments.services.email_utils.send_appointment_reminder_email")
+    def test_send_upcoming_appointment_reminders_handles_exception(
+        self, mock_send_email, mock_logger
+    ):
+        from appointments.services.email_utils import (
+            send_upcoming_appointment_reminders,
+        )
+
+        mock_send_email.side_effect = Exception("Test exception")
+        send_upcoming_appointment_reminders()
+
+        mock_logger.error.assert_called_once()
+        args, kwargs = mock_logger.error.call_args
+        self.assertIn(
+            f"Error during sending of reminder for appointment id ={self.appointment.id}",
+            args[0],
+        )
+        self.assertIn("Test exception", args[0])

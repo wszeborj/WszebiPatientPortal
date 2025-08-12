@@ -64,3 +64,13 @@ class DoctorScheduleServiceTests(TestCase):
         self.assertIn(self.doctor, schedule)
         self.assertEqual(len(schedule[self.doctor]), 7)
         self.assertIn(self.start_of_week, schedule[self.doctor])
+
+    def test_get_doctor_schedule_week_without_provided_doctor_returns_expected_structure(
+        self,
+    ):
+        schedule = DoctorScheduleService.get_doctor_schedule_week(
+            self.start_of_week, self.end_of_week
+        )
+        self.assertIn(self.doctor, schedule)
+        self.assertEqual(len(schedule[self.doctor]), 7)
+        self.assertIn(self.start_of_week, schedule[self.doctor])

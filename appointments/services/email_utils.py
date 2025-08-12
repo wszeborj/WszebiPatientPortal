@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 
 from django.conf import settings
@@ -7,6 +8,8 @@ from django.utils.timezone import now
 from core.celery import app
 
 from ..models import Appointment
+
+logger = logging.getLogger(__name__)
 
 
 @app.task
@@ -75,6 +78,6 @@ def send_upcoming_appointment_reminders():
             send_appointment_reminder_email(appointment)
             # print(f"Sent reminder for appointment id ={appointment.id}")
         except Exception as e:
-            print(
+            logger.error(
                 f"Error during sending of reminder for appointment id ={appointment.id}: {e}"
             )

@@ -2,8 +2,6 @@ from django.contrib.auth.models import Group
 
 from users.models import User
 
-# from users.services.permissions_in_groups import add_permissions_to_group
-
 
 def assign_user_to_permission_group(user: User):
     role_to_group = {
@@ -25,11 +23,3 @@ def assign_user_to_permission_group(user: User):
         raise Exception(
             f"Provided User with role {user.role} can not be assigned to any group"
         )
-
-    # group_name = role_to_group.get(user.role)
-    # if group_name:
-    #     group, created = Group.objects.get_or_create(name=group_name)
-    #     user.groups.add(group)
-    #
-    #     if created:
-    #         add_permissions_to_group(group, user.role)

@@ -1,8 +1,8 @@
 from datetime import date, time, timedelta
+from unittest.mock import patch
 
-from django.contrib.auth.models import Permission
 from django.contrib.messages import get_messages
-from django.test import TestCase, tag
+from django.test import TestCase
 from django.urls import reverse
 
 from schedules.factories import ScheduleDayFactory
@@ -12,7 +12,6 @@ from users.factories import DoctorFactory, UserFactory
 from users.models import User
 
 
-@tag("x")
 class TestScheduleCalendarView(TestCase):
     def test_schedule_for_staff_user(self):
         user = UserFactory(role=User.Role.ADMIN, is_staff=True)
@@ -40,16 +39,6 @@ class ScheduleDayViewTests(TestCase):
     def setUp(self):
         self.doctor = DoctorFactory()
         self.client.force_login(self.doctor.user)
-
-        permissions = Permission.objects.filter(
-            codename__in=[
-                "add_scheduleday",
-                "change_scheduleday",
-                "delete_scheduleday",
-                "view_scheduleday",
-            ]
-        )
-        self.doctor.user.user_permissions.set(permissions)
 
     def test_calendar_view_returns_200(self):
         url = reverse("schedules:schedule-calendar")
@@ -97,7 +86,8 @@ class ScheduleDayViewTests(TestCase):
         )
         self.assertTrue(ScheduleDay.objects.filter(doctor=self.doctor).exists())
 
-    def test_schedule_day_create_post_invalid(self):
+    @patch("schedules.views.logger")
+    def test_schedule_day_create_post_invalid(self, mock_logger):
         url = reverse("schedules:schedule-day-create")
         data = {
             "work_date": date.today(),
@@ -109,7 +99,12 @@ class ScheduleDayViewTests(TestCase):
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, 200)
         form = response.context["form"]
+        self.assertFalse(form.is_valid())
         self.assertIn("End time is before start time.", form.non_field_errors())
+
+        mock_logger.error.assert_called()
+        log_message = mock_logger.error.call_args[0][0]
+        self.assertIn("End time is before start time", log_message)
 
     def test_schedule_day_create_post_invalid_interval_mismatch(self):
         url = reverse("schedules:schedule-day-create")

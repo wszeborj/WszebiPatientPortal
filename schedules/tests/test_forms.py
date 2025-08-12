@@ -42,18 +42,30 @@ class ScheduleDayFormTests(TestCase):
         form = ScheduleDayForm(data=data, doctor=self.doctor)
         self.assertFalse(form.is_valid())
         self.assertIn("interval", form.errors)
+        self.assertIn(
+            "The appointment duration must be a multiple of 5 minutes.",
+            form.errors["interval"],
+        )
 
     def test_invalid_interval_too_small(self):
-        data = self.get_valid_data(interval=4)
+        data = self.get_valid_data(interval=0)
         form = ScheduleDayForm(data=data, doctor=self.doctor)
         self.assertFalse(form.is_valid())
         self.assertIn("interval", form.errors)
+        self.assertIn(
+            "The appointment duration must be between 5 and 60 minutes.",
+            form.errors["interval"],
+        )
 
     def test_invalid_interval_too_large(self):
-        data = self.get_valid_data(interval=61)
+        data = self.get_valid_data(interval=65)
         form = ScheduleDayForm(data=data, doctor=self.doctor)
         self.assertFalse(form.is_valid())
         self.assertIn("interval", form.errors)
+        self.assertIn(
+            "The appointment duration must be between 5 and 60 minutes.",
+            form.errors["interval"],
+        )
 
     def test_interval_longer_than_time_range(self):
         data = self.get_valid_data(

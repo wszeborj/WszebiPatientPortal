@@ -177,7 +177,7 @@ class AppointmentCreateView(PermissionRequiredMixin, CreateView):
         )
 
     def form_invalid(self, form):
-        logger.warning(f"FORM ERRORS: {form.errors}")
+        logger.error(f"FORM ERRORS: {form.errors}")
         for field, errors in form.errors.items():
             for error in errors:
                 messages.error(self.request, f"Issue in field {field}: {error}")
@@ -237,7 +237,7 @@ class AppointmentNoteView(PermissionRequiredMixin, DetailView):
         elif hasattr(user, "doctor_profile"):
             return queryset.filter(doctor=user.doctor_profile)
 
-        return queryset.objects.none()
+        return queryset.none()
 
 
 class AppointmentNoteUpdateView(PermissionRequiredMixin, UpdateView):

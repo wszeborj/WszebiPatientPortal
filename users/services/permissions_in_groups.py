@@ -61,10 +61,10 @@ MODEL_CLASSES = [
     ScheduleDay,
     Specialization,
     User,
-]  # Wszystkie modele z uprawnieniami
+]
 
 
-def get_permission_objects(permission_codenames):
+def get_permission_objects(permission_codenames: str) -> list[Permission]:
     permissions = []
     for model in MODEL_CLASSES:
         content_type = ContentType.objects.get_for_model(model)
@@ -75,16 +75,11 @@ def get_permission_objects(permission_codenames):
     return permissions
 
 
-def create_or_update_group_with_permissions(role: str, group_name: str = None):
+def create_or_update_group_with_permissions(role: str, group_name: str = None) -> Group:
     permission_codenames = ROLE_GROUP_PERMISSIONS.get(role, [])
     group_name = group_name or f"{role.lower()}_group"
 
     group, created = Group.objects.get_or_create(name=group_name)
-
-    # if created:
-    #     logger.info(f"Created group: {group_name}")
-    # else:
-    #     logger.info(f"Updated group: {group_name}")
 
     permissions = get_permission_objects(permission_codenames)
     group.permissions.set(permissions)
