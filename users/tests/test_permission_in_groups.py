@@ -34,40 +34,25 @@ class CreateOrUpdateGroupWithPermissionsTests(TestCase):
         self.assertEqual(group.name, "patient_group")
         self.assertTrue(group.permissions.exists())
 
-    def test_uses_custom_group_name(self):
-        group = create_or_update_group_with_permissions(
-            User.Role.PATIENT, group_name="custom_group"
-        )
-
-        self.assertEqual(group.name, "custom_group")
-
 
 class CreatePermissionGroupsTests(TestCase):
-    @patch("users.services.perm_assign.create_or_update_group_with_permissions")
-    @patch("users.services.perm_assign.logger")
-    def test_skips_creation_if_groups_exist(self, mock_logger, mock_create_fn):
-        # Given: wszystkie grupy istnieją
+    @patch(
+        "users.services.permissions_in_groups.create_or_update_group_with_permissions"
+    )
+    def test_skips_creation_if_groups_exist(self, mock_create_group):
         for role in ROLE_GROUP_PERMISSIONS:
             Group.objects.create(name=f"{role.lower()}_group")
 
-        # When
         create_permission_groups()
+        mock_create_group.assert_not_called()
 
-        # Then
-        mock_create_fn.assert_not_called()
-        mock_logger.info.assert_called_once_with(
-            "Groups already exist. Skipping creation."
-        )
-
-    @patch("users.services.perm_assign.create_or_update_group_with_permissions")
+    @patch(
+        "users.services.permissions_in_groups.create_or_update_group_with_permissions"
+    )
     def test_creates_groups_if_not_all_exist(self, mock_create_fn):
-        # Given: brak jakiejkolwiek grupy
         Group.objects.all().delete()
-
-        # When
         create_permission_groups()
 
-        # Then
         calls = [call_args[0][0] for call_args in mock_create_fn.call_args_list]
         expected_roles = set(ROLE_GROUP_PERMISSIONS.keys())
         self.assertEqual(set(calls), expected_roles)

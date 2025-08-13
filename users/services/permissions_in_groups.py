@@ -75,9 +75,9 @@ def get_permission_objects(permission_codenames: str) -> list[Permission]:
     return permissions
 
 
-def create_or_update_group_with_permissions(role: str, group_name: str = None) -> Group:
+def create_or_update_group_with_permissions(role: str) -> Group:
     permission_codenames = ROLE_GROUP_PERMISSIONS.get(role, [])
-    group_name = group_name or f"{role.lower()}_group"
+    group_name = f"{role.lower()}_group"
 
     group, created = Group.objects.get_or_create(name=group_name)
 

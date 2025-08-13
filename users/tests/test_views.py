@@ -204,6 +204,20 @@ class TestCompleteDoctorDataViews(TestCase):
             doctor_data["specialization"],
         )
 
+    def test_invalid_complete_doctor_data_post(self):
+        doctor_data = {
+            "title": "",
+            "description": "Experienced doctor with 10 years of practice",
+            "specialization": self.specialization.pk,
+        }
+        self.client.force_login(self.tested_user)
+        response = self.client.post(self.complete_doctor_url, doctor_data)
+
+        form = response.context["form"]
+        self.assertFalse(response.context["form"].is_valid())
+        self.assertIn("title", form.errors)
+        self.assertIn("This field is required.", form.errors["title"])
+
 
 class TestDoctorListViews(TestCase):
     def setUp(self):
@@ -288,6 +302,20 @@ class TestCustomLoginView(TestCase):
             follow=False,
         )
         self.assertRedirects(response, reverse("appointments:user-appointments"))
+
+    def test_custom_login_as_admin(self):
+        password = "password123"
+        admin = UserFactory.create(
+            role=User.Role.ADMIN,
+            is_active=True,
+        )
+
+        response = self.client.post(
+            self.custom_login_url,
+            data={"username": admin.username, "password": password},
+            follow=False,
+        )
+        self.assertRedirects(response, reverse("appointments:main"))
 
     def test_anonymous_user_gets_login_page(self):
         response = self.client.post(self.custom_login_url)

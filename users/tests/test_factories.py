@@ -122,3 +122,10 @@ class TestDoctorFactory(TestCase):
         assert doctor.specialization.count() == 2
         assert "Cardiology" in [s.name for s in doctor.specialization.all()]
         assert "Neurology" in [s.name for s in doctor.specialization.all()]
+
+    def test_doctor_with_already_existing_specialization(self):
+        cardiology = SpecializationFactory.create(name="Cardiology")
+        doctor = DoctorFactory(specialization=[cardiology])
+
+        self.assertTrue(doctor.specialization.exists())
+        self.assertIn(cardiology, doctor.specialization.all())

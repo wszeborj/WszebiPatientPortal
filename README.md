@@ -88,6 +88,8 @@ poetry run python manage.py test
 <li>Appointments view for doctor</li>
 <img src="https://github.com/user-attachments/assets/7e4434d3-aeb0-4799-9b99-4465490eb690" width="50%" height="50%"></img>
 <li>Appointments view for patient</li>
-<img src="https://github.com/user-attachments/assets/f07ef83d-3609-487a-97f4-1526427fdc46" width="50%" height="50%"></img>
-<li>Make appointment view</li>
+<img src="https://github.com/user-attachments/assets/dc8b2630-e8eb-45e6-ad53-898582903580" width="50%" height="50%"></img>
+<li>Make appointment view for patient</li>
 <img src="https://github.com/user-attachments/assets/fe905724-870c-4940-8c9d-616a4f864842" width="50%" height="50%"></img>
+<li>Add schedule day for doctor</li>
+<img src="https://github.com/user-attachments/assets/6f98d560-dd04-49b3-bc36-79aae2c0bedd" width="50%" height="50%"></img>

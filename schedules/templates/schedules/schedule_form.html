@@ -1,10 +1,10 @@
 {% extends 'appointments/base.html' %}
 
-{% block title %}Dodaj dzień pracy{% endblock %}
+{% block title %}Add work day{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h1 class="mb-4">Dodaj dzień pracy</h1>
+    <h1 class="mb-4">Add work day</h1>
     {% load bootstrap4 %}
     {% bootstrap_css %}
     {% bootstrap_javascript jquery='full' %}
@@ -15,13 +15,13 @@
 
         <div class="d-flex justify-content-end mt-4 gap-2">
             <button type="submit" name="action" value="save_exit" class="btn btn-success">
-                Zapisz i wyjdź
+                Save and exit
             </button>
             <button type="submit" name="action" value="save" class="btn btn-primary">
-                Zapisz
+                Save
             </button>
             <a href="{% url 'schedules:schedule-calendar' %}" class="btn btn-secondary">
-                Wróć do kalendarza
+                Exit to calendar
             </a>
         </div>
     </form>
