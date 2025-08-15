@@ -23,11 +23,13 @@ The platform supports email notifications and weekly schedule automation via Cel
 <li>Celery + Redis</li>
 <li>Sentry</li>
 <li>unittest</li>
+<li>Factory boy</li>
 <li>Pre-commit</li>
 <li>Docker-Compose & Docker</li>
 <li>Poetry</li>
 <li>Silk / Django Debug Toolbar</li>
 <li>Coverage</li>
+<li>Mailtrap</li>
 </ul>
 
 
@@ -93,3 +95,4 @@ poetry run python manage.py test
 <img src="https://github.com/user-attachments/assets/fe905724-870c-4940-8c9d-616a4f864842" width="50%" height="50%"></img>
 <li>Add schedule day for doctor</li>
 <img src="https://github.com/user-attachments/assets/6f98d560-dd04-49b3-bc36-79aae2c0bedd" width="50%" height="50%"></img>
+</ul>
