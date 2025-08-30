@@ -37,7 +37,7 @@ INSTALLED_APPS = [
     "bootstrap4",
     "django_filters",
     "debug_toolbar",
-    "silk",
+    # "silk",
 ]
 
 INSTALLED_EXTENSIONS = [
@@ -57,8 +57,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "silk.middleware.SilkyMiddleware",
-    # "users.middleware.CompleteDoctorProfileMiddleware",
+    # "silk.middleware.SilkyMiddleware",
+    "users.middleware.CompleteDoctorProfileMiddleware",
 ]
 
 ROOT_URLCONF = "core.urls"
@@ -85,16 +85,29 @@ WSGI_APPLICATION = "core.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": env("DB_NAME"),
-        "USER": env("DB_USER"),
-        "PASSWORD": env("DB_PASSWORD"),
-        "HOST": env("DB_HOST"),
-        "PORT": env("DB_PORT"),
+
+if env("ENVIRONMENT") == "production":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("RDS_DB_NAME"),
+            "USER": env("RDS_DB_USER"),
+            "PASSWORD": env("RDS_DB_PASSWORD"),
+            "HOST": env("RDS_DB_HOST"),
+            "PORT": env("RDS_DB_PORT"),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": env("DB_NAME"),
+            "USER": env("DB_USER"),
+            "PASSWORD": env("DB_PASSWORD"),
+            "HOST": env("DB_HOST"),
+            "PORT": env("DB_PORT"),
+        }
+    }
 
 
 # Password validation

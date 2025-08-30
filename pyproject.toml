@@ -27,6 +27,8 @@ django-debug-toolbar = "^5.2.0"
 safety = "^3.6.0"
 coverage = "^7.9.2"
 factory-boy = "^3.3.3"
+awscli = "^1.42.14"
+awsebcli = "^3.25"
 
 
 
